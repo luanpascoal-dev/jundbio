@@ -1,0 +1,68 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# Protege o arquivo .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .sql>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .css>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .js>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .png>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files database.php>
+    Order allow,deny
+    Deny from all
+</Files>
+
+
+# Redirecionar erros 404 para a página personalizada
+ErrorDocument 404 /JundBio/admin/404.php
+
+# Prevenir listagem de diretórios
+Options -Indexes
+
+# Proteger arquivos sensíveis
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Proteger arquivos de configuração
+<FilesMatch "^(database\.php|config\.php)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Forçar HTTPS (descomente se tiver SSL)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirecionar www para non-www (opcional)
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
