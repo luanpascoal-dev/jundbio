@@ -15,7 +15,7 @@ function get_postagens($tipo = 'recentes') {
     LEFT JOIN CURTIDA ct ON ct.Id_Postagem = p.Id
     LEFT JOIN FOTO f ON f.Id_Postagem = p.Id
     LEFT JOIN USUARIO u ON u.Id = p.Id_Usuario
-    WHERE p.Status = 'APROVADO' AND u.Ativo = 1
+    WHERE p.Status = 'APROVADO' AND u.Ativo = 1 AND p.Tipo = 'AVISTAMENTO'
     GROUP BY p.Id";
 
     if($tipo == 'recentes') {

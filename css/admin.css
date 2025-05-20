@@ -1,4 +1,4 @@
-/* Estilos para páginas de administração */
+/* Estilos para páginas de admin */
 .admin-container {
     max-width: 1200px;
     margin: 2rem auto;
@@ -14,11 +14,11 @@
 
 .admin-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 2fr; /* 1fr para o formulário e 2fr para a lista */
     gap: 2rem;
 }
 
-/* Formulário de Administração */
+/* Formulário de Admin */
 .admin-form {
     background: white;
     padding: 2rem;
@@ -32,7 +32,7 @@
     font-size: 1.5rem;
 }
 
-/* Lista de Administração */
+/* Lista de Admin */
 .admin-list {
     background: white;
     padding: 2rem;
@@ -48,14 +48,14 @@
 
 /* Tabela Responsiva */
 .table-responsive {
-    overflow-x: auto;
+    overflow-x: auto; /* Adiciona barra de rolagem horizontal */
     margin: 0 -2rem;
     padding: 0 2rem;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Remove bordas entre células */
     margin-top: 1rem;
 }
 
@@ -105,14 +105,14 @@ tr:hover {
 
 /* Botões de Ação */
 .btn-icon {
-    display: inline-flex;
+    display: inline-flex; /* Alinha o ícone verticalmente */
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
     border-radius: 6px;
     color: var(--text-dark);
-    transition: all 0.3s ease;
+    transition: all 0.3s ease; /* Efeito de transição suave */
     margin: 0 0.25rem;
 }
 
@@ -152,15 +152,15 @@ tr:hover {
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-green);
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-    background-color: white;
+    outline: none; /* Remove a borda ao clicar */
+    border-color: var(--primary-green); /* Cor da borda ao clicar */
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); /* Efeito de sombra ao clicar */
+    background-color: white; /* Cor de fundo ao clicar */
 }
 
 .form-group textarea {
     min-height: 120px;
-    resize: vertical;
+    resize: vertical; /* Permite redimensionar verticalmente */
 }
 
 /* Botões */
@@ -177,7 +177,7 @@ tr:hover {
     border-radius: 8px;
     font-weight: 500;
     transition: all 0.3s ease;
-    cursor: pointer;
+    cursor: pointer; /* Efeito de cursor ao passar o mouse */
     border: none;
 }
 
@@ -187,8 +187,8 @@ tr:hover {
 }
 
 .btn-primary:hover {
-    background: #2e7d32;
-    transform: translateY(-1px);
+    background: #2e7d32; /* Cor ao passar o mouse */
+    transform: translateY(-1px); /* Efeito de elevação */
 }
 
 /* Mensagens de Alerta */
@@ -316,11 +316,11 @@ tr:hover {
 .admin-nav-user-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    gap: 0.75rem; /* Espaço entre o avatar e o nome */
+    cursor: pointer; /* Efeito de cursor ao passar o mouse */
+    padding: 0.5rem; /* Padding interno */
+    border-radius: 8px; /* Borda arredondada */
+    transition: all 0.3s ease; /* Efeito de transição suave */
 }
 
 .admin-nav-user-info:hover {
@@ -340,7 +340,7 @@ tr:hover {
 }
 
 .admin-nav-dropdown {
-    position: absolute;
+    position: absolute; 
     top: 100%;
     right: 0;
     background: white;
@@ -361,7 +361,7 @@ tr:hover {
     gap: 0.75rem;
     padding: 0.75rem 1rem;
     color: var(--text-dark);
-    text-decoration: none;
+    text-decoration: none; 
     border-radius: 6px;
     transition: all 0.3s ease;
 }
@@ -393,12 +393,12 @@ tr:hover {
 
 @media (max-width: 768px) {
     .admin-nav-container {
-        flex-wrap: wrap;
-        gap: 1rem;
+        flex-wrap: wrap; /* Permite que os itens sejam quebrados em uma nova linha */
+        gap: 1rem; /* Espaço entre os itens */
     }
 
     .admin-nav-menu {
-        order: 3;
+        order: 3; /* Coloca o menu no final */
         width: 100%;
         justify-content: space-between;
     }
@@ -407,3 +407,51 @@ tr:hover {
         display: none;
     }
 } 
+
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));  /* Permite que os itens sejam ajustados automaticamente */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-green);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-info h3 {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.stat-info p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* Permite que os itens sejam ajustados automaticamente */
+    }
+}

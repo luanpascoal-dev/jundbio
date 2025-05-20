@@ -36,7 +36,7 @@
                 <div class="admin-nav-user-info">
                     
                     <?php if(isset($_SESSION['foto']) && !empty($_SESSION['foto'])): ?>
-                        <img src="<?php echo htmlspecialchars($_SESSION['foto']); ?>" alt="Foto de perfil" class="user-avatar">
+                        <img src="../<?php echo htmlspecialchars($_SESSION['foto']); ?>" alt="Foto de perfil" class="user-avatar">
                     <?php else: ?>
                         <div class="default-avatar">
                             <i class="fas fa-user"></i>
@@ -64,8 +64,8 @@
 <style>
     
 .default-avatar {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: var(--primary-green);
     display: flex;
@@ -77,8 +77,8 @@
 }
 
 .user-avatar {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover; /* Fazer a imagem cobrir a área */
     border: 2px solid white;
