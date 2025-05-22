@@ -11,6 +11,7 @@ include 'database.php';
     <title>Política de Privacidade - JundBio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/privacidade.css">
 </head>
 <body>
     <?php include 'layouts/header.php'; ?>
@@ -82,56 +83,6 @@ include 'database.php';
         </div>
     </div>
 
-    <style>
-    .privacy-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .privacy-container h1 {
-        color: var(--primary-green);
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .privacy-section {
-        margin-bottom: 2rem;
-    }
-
-    .privacy-section h2 {
-        color: var(--text-dark);
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .privacy-section p {
-        color: var(--text-light);
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-
-    .privacy-section ul {
-        list-style-type: disc;
-        margin-left: 1.5rem;
-        color: var(--text-light);
-    }
-
-    .privacy-section li {
-        margin-bottom: 0.5rem;
-        line-height: 1.4;
-    }
-
-    @media (max-width: 768px) {
-        .privacy-container {
-            margin: 1rem;
-            padding: 1.5rem;
-        }
-    }
-    </style>
 
     <?php include 'layouts/footer.php'; ?>
 </body>

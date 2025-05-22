@@ -1,17 +1,16 @@
 <?php
 session_start();
 
-if(isset($_SESSION['id']) && isset($_SESSION['usuario'])) {
-    header("Location: ./");
-    exit();
-}
+include 'functions/not_logado.php';
 
 include 'database.php';
 
-$errors = [];
-$success = false;
+include 'functions/insert_usuario.php';
+
+include 'functions/get_usuario.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $nome = trim($_POST['nome'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $senha = $_POST['senha'] ?? '';
@@ -19,54 +18,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $termos = isset($_POST['termos']) ? true : false;
 
     // Validação
-    if (empty($nome)) {
-        $errors[] = "Nome é obrigatório";
-    }
+    if (empty($nome)) 
+        $_SESSION['error'] = "Nome é obrigatório";
+    
 
-    if (empty($email)) {
-        $errors[] = "Email é obrigatório";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Email inválido";
-    }
+    if (empty($email)) 
+        $_SESSION['error'] = "Email é obrigatório";
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+        $_SESSION['error'] = "Email inválido";
 
-    if (empty($senha)) {
-        $errors[] = "Senha é obrigatória";
-    } elseif (strlen($senha) < 6) {
-        $errors[] = "A senha deve ter pelo menos 6 caracteres";
-    }
+    if (empty($senha)) 
+        $_SESSION['error'] = "Senha é obrigatória";
+    else if (strlen($senha) < 6) 
+        $_SESSION['error'] = "A senha deve ter pelo menos 6 caracteres";
 
-    if ($senha !== $confirmar_senha) {
-        $errors[] = "As senhas não coincidem";
-    }
+    if ($senha !== $confirmar_senha) 
+        $_SESSION['error'] = "As senhas não coincidem";
 
-    if (!$termos) {
-        $errors[] = "Você precisa aceitar os termos de uso";
-    }
+    if (!$termos) 
+        $_SESSION['error'] = "Você precisa aceitar os termos de uso";
 
     // Verificar se email já existe
-    if (empty($errors)) {
-        $stmt = $conn->prepare("SELECT Id FROM USUARIO WHERE Email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    if (empty($_SESSION['error'])) {
+
+        $id = get_id_by_email($email);
         
-        if ($result->num_rows > 0) {
-            $errors[] = "Este email já está cadastrado";
-        } else {
-            // Hash da senha
-            $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+        if ($id) 
+            $_SESSION['error'] = "Este email já está cadastrado";
+        else {
             
-            // Inserir usuário
-            $stmt = $conn->prepare("INSERT INTO USUARIO (Nome, Email, Senha) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $nome, $email, $senha_hash);
-            
-            if ($stmt->execute()) {
-                $success = true;
+            $insert = insert_usuario($nome, $email, $senha);
+
+            if ($insert) {
+                $_SESSION['success'] = "Cadastro realizado com sucesso! Redirecionando...";
                 // Redirecionar para login após 2 segundos
-                header("refresh:2;url=login.php");
+                header("refresh:2;url=login");
             } else {
-                $errors[] = "Erro ao cadastrar. Tente novamente.";
+                $_SESSION['error'] = "Erro ao cadastrar. Tente novamente.";
             }
+            
         }
     }
 }
@@ -93,22 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p>Junte-se à comunidade JundBio</p>
                 </div>
 
-                <?php if ($success): ?>
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i>
-                        Cadastro realizado com sucesso! Redirecionando...
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger">
-                        <ul>
-                            <?php foreach ($errors as $error): ?>
-                                <li><?= htmlspecialchars($error) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
+                <?php include 'layouts/alerts.php'; ?>
 
                 <form method="POST" class="auth-form">
                     <div class="form-columns">
@@ -156,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="form-group checkbox-group">
                                 <label class="checkbox-label">
                                     <input type="checkbox" name="termos" required>
-                                    <span>Li e aceito os <a href="termos.php" target="_blank">termos de uso</a> e <a href="privacidade.php" target="_blank">política de privacidade</a></span>
+                                    <span>Li e aceito os <a href="termos" target="_blank">termos de uso</a> e <a href="privacidade.php" target="_blank">política de privacidade</a></span>
                                 </label>
                             </div>
                         </div>

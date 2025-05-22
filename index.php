@@ -7,6 +7,10 @@ include 'functions/get_postagens.php';
 
 include 'functions/get_nivel.php';
 
+include 'functions/curtida.php';
+
+include 'functions/get_usuario.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -30,13 +34,22 @@ include 'functions/get_nivel.php';
             </div>
         </div>
 
+        
+
         <div class="container">
+            
+            <?php include 'layouts/alerts.php'; ?>
+
             <div class="actions-bar">
                 <a href="postar" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Nova Postagem
                 </a>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar postagens...">
+                </div>
                 <div class="filters">
-                    <select class="filter-select" name="tipo">
+                    <select class="filter-select" id="tipoFilter" name="tipo">
                         <option value="recentes">Mais Recentes</option>
                         <option value="curtidas">Mais Curtidas</option>
                         <option value="comentarios">Mais Comentadas</option>
@@ -62,37 +75,50 @@ include 'functions/get_nivel.php';
                     <div class="postagem">
                         <div class="postagem-header">
                             <div class="user-info">
-                            <?php if(isset($post['Foto_Usuario']) && !empty($post['Foto_Usuario'])): ?>
-                                <img src="<?php echo htmlspecialchars($post['Foto_Usuario']); ?>" alt="Foto de perfil" class="user-avatar">
-                            <?php else: ?>
-                                <div class="default-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            <?php endif; ?>
-                                <div>
-                                    <h3><?= htmlspecialchars($post['Nome_Usuario']) ?></h3>
-                                    <span class="post-type"><?= get_nivel($post['Id_Usuario']) ?></span>
-                                </div>
+                                <a href="perfil?id=<?= $post['Id_Usuario'] ?>" class="user-link">
+                                    <?php if(isset($post['Foto_Usuario']) && !empty($post['Foto_Usuario']) && file_exists($post['Foto_Usuario'])): ?>
+                                        <img src="<?php echo htmlspecialchars($post['Foto_Usuario']); ?>" alt="Foto de perfil" class="user-avatar">
+                                    <?php else: ?>
+                                        <div class="default-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div>
+                                        <h3>
+                                            <?= htmlspecialchars($post['Nome_Usuario']) ?>
+                                            <?php if(is_especialista($post['Id_Usuario'])): ?>
+                                                <i class="fas fa-check-circle verified-badge" title="Especialista verificado"></i>
+                                            <?php endif; ?>
+                                        </h3>
+                                        <span class="post-type"><?= get_nivel($post['Id_Usuario']) ?></span>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                         
                         <div class="postagem-conteudo">
-                            <p><?= htmlspecialchars($post['Texto']) ?></p>
+                            <p><?= htmlspecialchars(substr($post['Texto'], 0, 200)) . (strlen($post['Texto']) > 100 ? '...' : '') ?></p>
                         </div>
 
-                        <?php if($post['Foto']): ?>
                         <div class="postagem-imagem">
-                            <img src="<?= htmlspecialchars($post['Foto']) ?>" alt="Imagem da postagem">
-                        </div>
+                        <?php if($post['Foto'] && file_exists($post['Foto'])): ?>
+                            <a href="post?id=<?= $post['Id'] ?>">
+                                <img src="<?= htmlspecialchars($post['Foto']) ?>" alt="Imagem da postagem">
+                            </a>
+                        <?php else: ?>
+                            <div class="no-image">
+                                <i class="fas fa-leaf"></i>
+                            </div>
                         <?php endif; ?>
-
+                        </div>
+                        
                         <div class="postagem-footer">
                             <div class="interactions">
-                                <button class="btn btn-danger btn-sm like-btn" data-post-id="<?= $post['Id'] ?>">
-                                    <i class="fa-solid fa-heart"></i>
-                                    <span><?= $post['Curtidas'] ?></span>
+                                <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="btn btn-danger btn-sm <?php if(!has_curtida($_SESSION['id'], $post['Id'])) echo 'like-btn'; ?>" data-post-id="<?= $post['Id'] ?>">
+                                <i class="<?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
+                                <span data-count-id="<?php echo $post['Id']; ?>"><?php echo $post['Curtidas']; ?></span>
                                 </button>
-                                <a href="comentar.php?id=<?= $post['Id'] ?>" class="btn btn-primary btn-sm">
+                                <a href="post?id=<?= $post['Id'] ?>" class="btn btn-primary btn-sm comment-btn">
                                     <i class="fa-solid fa-comment-dots"></i>
                                     <span><?= $post['Comentarios'] ?></span>
                                 </a>
@@ -114,15 +140,29 @@ include 'functions/get_nivel.php';
 
     <?php include 'layouts/footer.php'; ?>
 
+    <script src="js/curtir.js"></script>
     <script>
-        // Like button functionality
-        document.querySelectorAll('.like-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const postId = this.dataset.postId;
-                // Add your like functionality here
-                this.classList.toggle('liked');
+        // Filtros e busca
+        const searchInput = document.getElementById('searchInput');
+        const tipoFilter = document.getElementById('tipoFilter');
+        const postagens = document.querySelectorAll('.postagem');
+
+        function filterCards() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const tipoValue = tipoFilter.value.toLowerCase();
+
+            postagens.forEach(postagem => {
+                const texto = postagem.querySelector('.postagem-conteudo p').textContent.toLowerCase();
+
+                const matchesSearch = texto.includes(searchTerm);
+                const matchesTipo = !tipoValue || true;//tipo === tipoValue;
+
+                postagem.style.display = matchesSearch && matchesTipo ? 'flex' : 'none';
             });
-        });
+        }
+
+        searchInput.addEventListener('input', filterCards);
+        tipoFilter.addEventListener('change', filterCards);
     </script>
 </body>
 </html>

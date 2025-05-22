@@ -21,7 +21,7 @@ function get_comentario($id) {
     $stmt = $conn->prepare("SELECT * FROM COMENTARIO WHERE Id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $stmt->fetch_assoc();
     return $result;
 }
 
@@ -32,7 +32,7 @@ function get_comentarios_by_post($postagem_id) {
     $stmt->execute();
 
     $result = $stmt->get_result();
-    return $result;
+    return $result->num_rows;
 }
 
 function get_comentarios_by_usuario($usuario_id) {
@@ -42,7 +42,7 @@ function get_comentarios_by_usuario($usuario_id) {
     $stmt->execute();
 
     $result = $stmt->get_result();
-    return $result;
+    return $result->num_rows;
 }
 
 function get_comentarios_by_especie($especie_id) {

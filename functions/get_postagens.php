@@ -56,3 +56,21 @@ function get_postagens_by_usuario($usuario_id) {
     $stmt->execute();
     return $stmt->get_result();
 }
+
+function get_postagens_by_especie($especie_id) {
+    global $conn;
+    $sql = "SELECT p.*, u.Nome as Nome_Usuario, u.Foto as Foto_Usuario, l.Latitude, l.Longitude
+    FROM POSTAGEM p 
+    JOIN USUARIO u ON p.Id_Usuario = u.Id 
+    JOIN FOTO f ON f.Id_Postagem = p.Id 
+    JOIN LOCALIZACAO l ON l.Id = f.Id_Localizacao
+    WHERE f.Id_Especie = ? AND p.Status = 'APROVADO'
+    ORDER BY p.DataHora_Envio DESC 
+    LIMIT 6";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $especie_id);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+

@@ -22,7 +22,7 @@ function get_especie($id) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
-    return $result;
+    return $result->fetch_assoc();
 }
 
 function get_especies_by_familia($familia) {

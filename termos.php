@@ -11,6 +11,7 @@ include 'database.php';
     <title>Termos de Uso - JundBio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/termos.css">
 </head>
 <body>
     <?php include 'layouts/header.php'; ?>
@@ -72,57 +73,6 @@ include 'database.php';
             </div>
         </div>
     </div>
-
-    <style>
-    .terms-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .terms-container h1 {
-        color: var(--primary-green);
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .terms-section {
-        margin-bottom: 2rem;
-    }
-
-    .terms-section h2 {
-        color: var(--text-dark);
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .terms-section p {
-        color: var(--text-light);
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-
-    .terms-section ul {
-        list-style-type: disc;
-        margin-left: 1.5rem;
-        color: var(--text-light);
-    }
-
-    .terms-section li {
-        margin-bottom: 0.5rem;
-        line-height: 1.4;
-    }
-
-    @media (max-width: 768px) {
-        .terms-container {
-            margin: 1rem;
-            padding: 1.5rem;
-        }
-    }
-    </style>
 
     <?php include 'layouts/footer.php'; ?>
 </body>

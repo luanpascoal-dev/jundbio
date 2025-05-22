@@ -15,6 +15,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
     $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
     $descricao_local = isset($_POST['descricao_local']) ? trim($_POST['descricao_local']) : null;
+
+    $texto = str_replace(chr(10), '', $texto);
     
     // Validações
     if(empty($texto) || empty($tipo)) {
@@ -74,7 +76,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Buscar espécies para o select
-$especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE WHERE NomeComum != 'Desconhecido' ORDER BY NomeComum");
+$especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE ORDER BY NomeComum");
 ?>
 
 <!DOCTYPE html>
@@ -86,6 +88,7 @@ $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE WHER
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/postar.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <?php include 'layouts/header.php'; ?>
@@ -133,20 +136,35 @@ $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE WHER
                 </div>
 
                 <div class="form-group">
-                    <label for="texto">Descrição</label>
-                    <textarea id="texto" name="texto" rows="4" required></textarea>
+                    <label for="texto">Descrição <span id="charCount">(0/1024)</span></label>
+                    <textarea id="texto" name="texto" rows="4" maxlength="1024" required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Localização</label>
+
+                    <div class="mapa-section">
+                        <div class="mapa-container" id="mapa-distribuicao"></div>
+                        <div class="mapa-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Clique em um lugar no mapa para definir a localização</span>
+                        </div>
+                    </div>
+                    
+                    <div class="loading">
+                        <i class="fa-solid fa-spinner" id="loading-spinner"></i>
+                        <span>Carregando...</span>
+                    </div>
+
                     <div class="location-inputs">
-                        <input type="number" step="any" name="latitude" placeholder="Latitude" class="location-input">
-                        <input type="number" step="any" name="longitude" placeholder="Longitude" class="location-input">
+                        <input type="number" name="latitude" step="0.0000001" placeholder="Latitude" class="location-input" required>
+                        <input type="number" name="longitude" step="0.0000001" placeholder="Longitude" class="location-input" required>
                     </div>
                     <input type="text" name="descricao_local" placeholder="Descrição do local (opcional)" class="location-desc">
                     <button type="button" id="get-location" class="btn btn-light">
                         <i class="fas fa-map-marker-alt"></i> Usar minha localização
                     </button>
+                    
                 </div>
 
                 <div class="btn-container">
@@ -164,18 +182,6 @@ $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE WHER
     </div>
 
     <script>
-        document.getElementById('get-location').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    document.querySelector('input[name="latitude"]').value = position.coords.latitude;
-                    document.querySelector('input[name="longitude"]').value = position.coords.longitude;
-                }, function(error) {
-                    alert('Erro ao obter localização: ' + error.message);
-                });
-            } else {
-                alert('Geolocalização não é suportada pelo seu navegador.');
-            }
-        });
 
         function previewFotos(input) {
             const container = document.getElementById('fotoPreviewContainer');
@@ -237,7 +243,74 @@ $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE WHER
             
             document.querySelector('.foto-upload-container').appendChild(contador);
         }
+
+        document.getElementById('texto').addEventListener('input', function() {
+            const maxLength = this.getAttribute('maxlength');
+            const currentLength = this.value.length;
+            document.getElementById('charCount').textContent = `${currentLength}/${maxLength}`;
+        });
     </script>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Coordenadas de Jundiaí
+        const jundiaiCoords = [-23.1861, -46.8844];
+        
+        // Inicializa o mapa
+        const mapa = L.map('mapa-distribuicao').setView(jundiaiCoords, 12);
+
+        // Adiciona o layer do OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(mapa);
+
+        var marker = null;
+        
+        function onMapClick(e) {
+            updateMarker(e.latlng.lat, e.latlng.lng);
+        }
+
+        function updateMarker(latitude, longitude) {
+            if(marker == null) {
+                marker = L.marker([latitude, longitude]).addTo(mapa);
+            } else {
+                marker.setLatLng([latitude, longitude]);
+            }
+            console.log(typeof latitude);
+            console.log(typeof longitude);
+
+            document.querySelector('input[name="latitude"]').value = new Number(latitude).toFixed(7);
+            document.querySelector('input[name="longitude"]').value = new Number(longitude).toFixed(7);
+        }
+
+        document.getElementById('get-location').addEventListener('click', function() {
+            document.querySelector('.loading').style.display = 'flex';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    updateMarker(position.coords.latitude, position.coords.longitude);
+                    document.querySelector('.loading').style.display = 'none';
+                }, function(error) {
+                    alert('Erro ao obter localização: ' + error.message);
+                    document.querySelector('.loading').style.display = 'none';
+                });
+            } else {
+                alert('Geolocalização não é suportada pelo seu navegador.');
+                document.querySelector('.loading').style.display = 'none';
+            }
+            
+        });
+
+        function updateInputs() {
+            let lat = document.querySelector('input[name="latitude"]').value;
+            let long = document.querySelector('input[name="longitude"]').value;
+            updateMarker(Number(lat), Number(long));
+        }
+
+        document.querySelector('input[name="latitude"]').addEventListener('input', updateInputs);
+        document.querySelector('input[name="longitude"]').addEventListener('input', updateInputs);
+
+
+        mapa.on('click', onMapClick);
+    </script>
 </body>
 </html> 

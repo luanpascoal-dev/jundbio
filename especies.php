@@ -5,6 +5,8 @@ include 'database.php';
 
 include 'functions/get_especie.php';
 
+include 'functions/get_image.php';
+
 // Buscar todas as espécies
 $especies = get_especies();
 ?>
@@ -54,14 +56,20 @@ $especies = get_especies();
 
             <div class="especies-grid">
 
-                <?php while ($especie = $especies->fetch_assoc()): ?>
+                <?php while ($especie = $especies->fetch_assoc()): 
+                    $foto = get_especie_image($especie['Id']);
+                    ?>
                     <div class="especie-card" 
                          data-classificacao="<?= strtolower($especie['Tipo']) ?>"
                          data-status="<?= strtolower($especie['StatusExtincao']) ?>">
                         <div class="especie-imagem">
-                            <div class="no-image">
-                                <i class="fas fa-leaf"></i>
-                            </div>
+                            <?php if ($foto && file_exists($foto)): ?>
+                                <img src="<?= $foto ?>" alt="<?= htmlspecialchars($especie['NomeComum']) ?>">
+                            <?php else: ?>
+                                <div class="no-image">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                            <?php endif; ?>
                             
                             <?php if ($especie['StatusExtincao']): ?>
                                 <span class="status-badge <?= strtolower(str_replace(' ', '-', $especie['StatusExtincao'])) ?>">
@@ -92,7 +100,7 @@ $especies = get_especies();
                                 <?= htmlspecialchars(substr($especie['Descricao'], 0, 150)) ?>...
                             </p>
 
-                            <a href="especie?id=<?= $especie['Id'] ?>" class="btn btn-primary">
+                            <a href="verespecie?id=<?= $especie['Id'] ?>" class="btn btn-primary">
                                 <i class="fas fa-info-circle"></i>
                                 Ver detalhes
                             </a>

@@ -1,10 +1,7 @@
 <?php
 session_start();
 
-if(isset($_SESSION['id']) && isset($_SESSION['usuario'])) {
-    header("Location: ./");
-    exit();
-}
+include 'functions/not_logado.php';
 
 include 'database.php';
 
@@ -17,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($email) || empty($senha)) {
         $_SESSION['error'] = "Email e senha são obrigatórios";
-        header("Location: ./");
+        header("Location: login");
         exit();
     }
 

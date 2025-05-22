@@ -12,7 +12,9 @@
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     overflow: hidden;
-    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .especie-card:hover {
@@ -36,20 +38,6 @@
 
 .especie-card:hover .especie-imagem img {
     transform: scale(1.05);
-}
-
-.no-image {
-    width: 100%;
-    height: 100%;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.no-image i {
-    font-size: 3rem;
-    color: var(--light-green);
 }
 
 /* Status Badge */
@@ -84,6 +72,9 @@
 /* Informações da Espécie */
 .especie-info {
     padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .especie-info h3 {
@@ -92,11 +83,16 @@
     margin-bottom: 0.5rem;
 }
 
-.nome-cientifico {
+.especie-info .nome-cientifico {
     color: var(--text-light);
     font-style: italic;
     font-size: 0.9rem;
     margin-bottom: 1rem;
+}
+
+.especie-info a {
+    margin-top: auto;
+    width: max-content;
 }
 
 /* Meta Informações */
@@ -219,4 +215,4 @@
     .especie-info {
         padding: 1rem;
     }
-} 
+}
