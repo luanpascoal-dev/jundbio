@@ -1,0 +1,117 @@
+/* ==========================================================
+   BOTÕES
+========================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer; /* Efeito de cursor ao passar o mouse */
+  border: none;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* Botões pequenos */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Botões com ícones */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-icon i {
+  font-size: 1.2rem;
+}
+
+/* Botões de tamanho grande */
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-primary {
+  background: var(--primary-green);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--secondary-green);
+  color: white;
+}
+
+.btn-light {
+  background: var(--cream);
+  color: var(--text-dark);
+}
+
+.btn-danger {
+  background: var(--danger-color);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  color: white;
+  border: 1px solid white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: white;
+  color: var(--primary-green);
+}
+
+/* ==========================================================
+   BOTÕES ESPECIAIS DE POSTAGENS
+========================================================== */
+
+.like-btn,
+.comment-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.like-btn.liked {
+  color: white;
+  background: var(--danger-color);
+}
+
+.comment-btn:hover {
+  background: rgba(14, 137, 69, 0.1);
+  color: var(--primary-green);
+}
+
+.like-btn:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+}
+
+.like-btn span, .comment-btn span {
+  font-size: 0.9rem;
+}

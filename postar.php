@@ -2,11 +2,16 @@
 
 session_start();
 
+$title = "Nova Postagem";
+$css = ['postar'];
+
 include 'functions/is_logado.php';
 
 include 'database.php';
 
 include 'functions/get_usuario.php';
+
+include 'functions/get_especie.php';
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $texto = trim($_POST['texto']);
@@ -35,8 +40,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 2. Inserir postagem
-            $stmt = $conn->prepare("INSERT INTO POSTAGEM (Tipo, Texto, Id_Usuario) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $tipo, $texto, $_SESSION['id']);
+            $stmt = $conn->prepare("INSERT INTO POSTAGEM (Tipo, Texto, Id_Usuario, Status) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("sssi", strtoupper($tipo), $texto, $_SESSION['id'], 'APROVADO');
             $stmt->execute();
             $postagem_id = $conn->insert_id;
 
@@ -79,19 +84,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE ORDER BY NomeComum");
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Postagem - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/postar.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</head>
 
-<?php include 'layouts/header.php'; ?>
+
+<?php 
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
 
 <body>
     <div class="main-content">
@@ -115,10 +113,15 @@ $especies = $conn->query("SELECT Id, NomeComum, NomeCientifico FROM ESPECIE ORDE
                         <label for="especie_id">Espécie (opcional)</label>
                         <select id="especie_id" name="especie_id">
                             <option value="">Selecione a espécie</option>
-                            <?php while($especie = $especies->fetch_assoc()): ?>
+                            <option value="1">
+                                    <?php echo get_especie(1)['NomeComum']; ?>
+                            </option>
+                            <?php while($especie = $especies->fetch_assoc()): 
+                                if($especie['Id'] != 1): ?>
                                 <option value="<?php echo $especie['Id']; ?>">
-                                    <?php echo htmlspecialchars($especie['NomeComum'] . ' (' . $especie['NomeCientifico'] . ')'); ?>
+                                    <?php echo htmlspecialchars($especie['NomeComum'] . ($especie['NomeCientifico'] != null ? ' (' . $especie['NomeCientifico'] . ')' : '')); ?>
                                 </option>
+                                <?php endif; ?>
                             <?php endwhile; ?>
                         </select>
                     </div>

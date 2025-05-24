@@ -1,11 +1,17 @@
 <?php
 session_start();
+
+$title = "Gerenciar Espécies";
+$css = ['admin'];
+$path = "../";
+
 include '../functions/is_logado.php';
 include '../database.php';
 
 include '../functions/is_admin.php';
 
 include '../functions/get_especie.php';
+include '../functions/insert_especie.php';
 
 // Processar formulário
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -18,19 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $status_extincao = trim($_POST['status_extincao']);
     $tipo = trim($_POST['tipo']);
 
-    if (empty($nome_comum) || empty($nome_cientifico) || empty($familia) || empty($classificacao)) {
+    if (empty($nome_comum) || empty($nome_cientifico) || empty($familia) || empty($classificacao) || empty($tipo) || empty($status_extincao)) {
         $_SESSION['error'] = "Campos obrigatórios não preenchidos";
     } else {
         try {
 
-            $stmt = $conn->prepare("INSERT INTO ESPECIE (NomeComum, NomeCientifico, Familia, Classificacao, Descricao, StatusExtincao, Tipo) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssss", $nome_comum, $nome_cientifico, $familia, $classificacao, $descricao, $status_extincao, $tipo);
-            
-            if ($stmt->execute()) {
+            $insert = insert_especie($nome_comum, $nome_cientifico, $familia, $classificacao, $descricao, $status_extincao, $tipo);
+
+            if ($insert) 
                 $_SESSION['success'] = "Espécie cadastrada com sucesso!";
-            } else {
+            else 
                 throw new Exception($conn->error);
-            }
+            
         } catch (Exception $e) {
             $_SESSION['error'] = "Erro ao cadastrar espécie";
         }
@@ -39,20 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Buscar todas as espécies
 $especies = get_especies();
+
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Espécies - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/admin.css">
-</head>
-
-<?php include '../layouts/header_admin.php'; ?>
+<?php 
+include '../layouts/header.php'; 
+include '../layouts/navbar_admin.php';
+?>
 
 <body>
     <div class="main-content">
@@ -96,7 +94,7 @@ $especies = get_especies();
                         </div>
 
                         <div class="form-group">
-                            <label for="status_extincao">Status de Extinção</label>
+                            <label for="status_extincao">Status de Extinção *</label>
                             <select id="status_extincao" name="status_extincao">
                                 <option value="">Selecione...</option>
                                 <option value="Em Perigo">Em Perigo</option>

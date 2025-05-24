@@ -1,17 +1,15 @@
 <?php
 session_start();
+
+$title = 'Página não encontrada';
+$error = '404';
+$description = 'Ops! Parece que a página que você está procurando não existe ou foi movida.';
+$css = ['error'];
+$path = "../"
+
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página não encontrada - JundBio</title>
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/error.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php include '../layouts/header.php'; ?>
 <body>
     <main class="main-content">
         <div class="error-container">
@@ -19,9 +17,9 @@ session_start();
                 <div class="error-icon">
                     <i class="fas fa-leaf"></i>
                 </div>
-                <h1>404</h1>
-                <h2>Página não encontrada</h2>
-                <p>Ops! Parece que a página que você está procurando não existe ou foi movida.</p>
+                <h1><?= $error ?></h1>
+                <h2><?= $title ?></h2>
+                <p><?= $description ?></p>
                 <div class="error-actions">
                     <a href="javascript:history.back()" class="btn btn-light">
                         <i class="fas fa-arrow-left"></i>

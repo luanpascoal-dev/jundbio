@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+$title = "Perfil";
+$css = ['perfil'];
+
 include 'database.php';
 
 include 'functions/is_logado.php';
@@ -8,7 +11,7 @@ include 'functions/is_logado.php';
 include 'functions/get_usuario.php';
 include 'functions/get_postagens.php';
 include 'functions/get_comentario.php';
-include 'functions/curtida.php';
+include 'functions/get_curtidas.php';
 include 'functions/get_nivel.php';
 
 $usuario_id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['id'];
@@ -33,7 +36,7 @@ $total_curtidas = get_curtidas_postagens_by_usuario($usuario_id);
 // Buscar total de comentários
 $total_comentarios = get_comentarios_by_usuario($usuario_id);
 
-// Calcular pontuação (exemplo: 1 ponto por foto, 2 por curtida, 3 por comentário)
+
 $pontuacao = get_pontos_by_id($usuario_id);
 
 $proximo_nivel = get_proximo_nivel($pontuacao);
@@ -70,15 +73,12 @@ $conquistas = [
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/perfil.css">
-    <link rel="stylesheet" href="css/main.css">
+<?php
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
+<body>
     <style>
         .level-medal {
             width: 120px;
@@ -94,9 +94,6 @@ $conquistas = [
             animation: pulse 2s infinite;
         }
     </style>
-</head>
-<body>
-    <?php include 'layouts/header.php'; ?>
 
     <div class="container">
         
@@ -140,11 +137,24 @@ $conquistas = [
                         <label>Data de Registro</label>
                         <p><?php echo date('d/m/Y', strtotime($usuario['DataRegistro'])); ?></p>
                     </div>
+                    <div class="info-group">
+                        <label>Ocupação</label>
+                        <p><?php echo !empty($usuario['Ocupacao']) ? htmlspecialchars($usuario['Ocupacao']) : 'Nenhuma'; ?></p>
+                    </div>
+                    <div class="info-group">
+                        <label>Biografia</label>
+                        <p><?php echo !empty($usuario['Biografia']) ? htmlspecialchars($usuario['Biografia']) : 'Nenhuma'; ?></p>
+                    </div>
 
-                    <a href="editar_perfil" class="btn btn-primary">
-                        <i class="fas fa-edit"></i> Editar Perfil
-                    </a>
+                    
 
+                    
+
+                    <?php if($usuario['Id'] == $_SESSION['id']): ?>
+                        <a href="editar_perfil" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Editar Perfil
+                        </a>
+                    <?php endif; ?>
                 </div>
 
 
@@ -241,17 +251,18 @@ $conquistas = [
                 </div>
             </div>
 
-
+            <div class="profile-posts">
+            </div>
 
             <!-- Coluna de Postagens -->
             <div class="profile-posts">
 
-                <h3>Minhas Postagens</h3>
+                <h3>Postagens</h3>
 
-                <?php if (empty($postagens)): ?>
-                    <div class="no-posts">
+                <?php if(!$postagens || empty($postagens) || $postagens->num_rows <= 0): ?>
+                    <div class="no-results">
                         <i class="fas fa-newspaper"></i>
-                        <p>Você ainda não fez nenhuma postagem.</p>
+                        <p>Este usuário ainda não fez nenhuma postagem</p>
                     </div>
 
                 <?php else: ?>
@@ -272,7 +283,7 @@ $conquistas = [
                                             <span class="post-status <?php echo strtolower($post['Status']); ?>">
                                                 <?php echo $post['Status']; ?>
                                             </span>
-                                            <a href="post?id=<?php echo $post['Id']; ?>" class="btn btn-sm btn-primary">
+                                            <a href="verpost?id=<?php echo $post['Id']; ?>" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-eye"></i> Ver Post
                                             </a>
                                         </div>

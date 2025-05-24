@@ -1,0 +1,16 @@
+/* ==========================================================
+   IMPORTAÇÕES DOS MODULOS
+========================================================== */
+
+@import url('./modules/variaveis.css');
+@import url('./modules/global.css');
+
+@import url('./modules/navbar.css');
+@import url('./modules/buttons.css');
+@import url('./modules/alerts.css');
+@import url('./modules/footer.css');
+@import url('./modules/post.css');
+@import url('./modules/avatar.css');
+@import url('./modules/forms.css');
+@import url('./modules/responsive.css');
+@import url('./modules/badges.css');

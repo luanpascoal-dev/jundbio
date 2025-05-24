@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+$title = "Painel Administrativo";
+$css = ['admin'];
+$path = "../";
+
 include '../database.php';
 include '../functions/is_admin.php';
 
@@ -23,7 +27,7 @@ try {
     $stats['especies'] = get_total_especies();
 
     // Total de usuários
-    $stats['usuarios'] = get_total_usuarios();
+    $stats['usuarios'] = get_total_usuarios(true);
 
     // Total de posts
     $stats['posts'] = get_total_postagens();
@@ -32,21 +36,10 @@ try {
     $stats['comentarios'] = get_total_comentarios();
 
     // Últimas espécies cadastradas
-    $stmt = $conn->query("
-        SELECT * 
-        FROM ESPECIE WHERE Id != 1
-        ORDER BY Id DESC 
-        LIMIT 5
-    ");
-    $ultimas_especies = $stmt->fetch_all(MYSQLI_ASSOC);
+    $ultimas_especies = get_especies(true, 5);
 
     // Últimos usuários registrados
-    $stmt = $conn->query("
-        SELECT * FROM USUARIO 
-        ORDER BY Id DESC 
-        LIMIT 5
-    ");
-    $ultimos_usuarios = $stmt->fetch_all(MYSQLI_ASSOC);
+    $ultimos_usuarios = get_usuarios(true, 5);
 
 } catch(PDOException $e) {
     $_SESSION['error'] = "Erro ao carregar estatísticas: " . $e->getMessage();
@@ -55,18 +48,10 @@ try {
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/admin.css">
-</head>
-
-<?php include '../layouts/header_admin.php'; ?>
+<?php 
+include '../layouts/header.php'; 
+include '../layouts/navbar_admin.php';
+?>
 
 <div class="admin-container">
     <h2>Dashboard</h2>

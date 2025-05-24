@@ -1,0 +1,59 @@
+/* ========== Estilo Base para Documentos de Termos e Privacidade ========== */
+.box-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.box-container h1 {
+    color: var(--primary-green);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* ========== Seções de Documento de Termos e Privacidade ========== */
+.box-section {
+    margin-bottom: 2rem;
+}
+
+.box-section h2 {
+    color: var(--text-dark);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.box-section p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.box-section ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    color: var(--text-light);
+}
+
+.box-section li {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+/* ========== Responsividade ========== */
+@media (max-width: 768px) {
+    .box-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .box-section h2 {
+        font-size: 1.1rem;
+    }
+
+    .box-section p {
+        font-size: 0.95rem;
+    }
+}

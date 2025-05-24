@@ -1,0 +1,46 @@
+/* === Status Badge === */
+.status-badge {
+    position: absolute;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    font-weight: bold;
+}
+
+.status-badge.em-perigo    { background: var(--danger-color); }
+.status-badge.vulnerável    { background: #e67e22; }
+.status-badge.quase-ameaçada { background: #f1c40f; color: var(--text-dark); }
+.status-badge.pouco-preocupante { background: var(--success-color); }
+
+
+/* ========== Badges de Status ========== */
+
+.status-ativo {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inativo {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.tipo-admin {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.tipo-comum {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.tipo-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 500;
+    margin-left: 5px;
+}

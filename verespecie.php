@@ -1,14 +1,19 @@
 <?php
 session_start();
+
+$title = "Espécie";
+$css = ['verespecie'];
+
 include 'database.php';
-include 'functions/is_logado.php';
+
 include 'functions/get_especie.php';
 include 'functions/get_image.php';
 include 'functions/get_postagens.php';
+include 'functions/get_usuario.php';
 
 $especie_id = isset($_GET['id']) ? $_GET['id'] : null;
 
-if(!$especie_id) {
+if(!$especie_id || $especie_id == 1) {
     $_SESSION['error'] = 'Espécie não encontrada';
     header('Location: especies');
     exit();
@@ -25,38 +30,30 @@ if(!$especie) {
 $foto = get_especie_image($especie_id);
 
 // Buscar fotos adicionais da espécie
-$stmt = $conn->prepare("SELECT URL FROM FOTO WHERE Id_Especie = ? AND Status = 'APROVADO' LIMIT 5");
-$stmt->bind_param("i", $especie_id);
-$stmt->execute();
-$fotos_adicionais = $stmt->get_result();
+$fotos_adicionais = get_especie_foto($especie_id, 5);
 
 // Buscar postagens relacionadas à espécie
 $postagens = get_postagens_by_especie($especie_id);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($especie['NomeComum']) ?> - JundBio</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/verespecie.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</head>
+
+<?php 
+$title = htmlspecialchars($especie['NomeComum']);
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <div class="container">
         <?php include 'layouts/alerts.php'; ?>
 
-        <div class="especie-header">
-            <div class="especie-grid">
-                <div class="especie-imagem">
+        <div class="especie-header card-white">
+            <div class="especie-grid grid-2cols">
+                <div class="especie-imagem img-rounded">
                     <?php if($foto && file_exists($foto)): ?>
-                        <img src="<?= $foto ?>" alt="<?= htmlspecialchars($especie['NomeComum']) ?>">
+                        <img src="<?= $foto ?>" class="img-cover" alt="<?= htmlspecialchars($especie['NomeComum']) ?>">
                     <?php else: ?>
                         <div class="no-image">
                             <i class="fas fa-leaf"></i>
@@ -65,11 +62,11 @@ $postagens = get_postagens_by_especie($especie_id);
                 </div>
 
                 <div class="especie-info">
-                    <h1><?= htmlspecialchars($especie['NomeComum']) ?></h1>
-                    <p class="nome-cientifico"><?= htmlspecialchars($especie['NomeCientifico']) ?></p>
+                    <h1 class="title-large"><?= htmlspecialchars($especie['NomeComum']) ?></h1>
+                    <p class="nome-cientifico text-light italic"><?= htmlspecialchars($especie['NomeCientifico']) ?></p>
 
                     <?php if($especie['StatusExtincao']): ?>
-                        <span class="status-badge <?= strtolower(str_replace(' ', '-', $especie['StatusExtincao'])) ?>">
+                        <span class="status-badge badge badge-<?= strtolower(str_replace(' ', '-', $especie['StatusExtincao'])) ?>">
                             <?= htmlspecialchars($especie['StatusExtincao']) ?>
                         </span>
                     <?php endif; ?>
@@ -105,18 +102,18 @@ $postagens = get_postagens_by_especie($especie_id);
             </div>
         </div>
 
-        <div class="info-section">
+        <div class="info-section card-white">
             <h2><i class="fas fa-info-circle"></i> Descrição</h2>
             <p class="descricao"><?= nl2br(htmlspecialchars($especie['Descricao'])) ?></p>
         </div>
 
         <?php if($fotos_adicionais->num_rows > 0): ?>
-            <div class="info-section">
+            <div class="info-section card-white">
                 <h2><i class="fas fa-images"></i> Galeria de Fotos</h2>
                 <div class="fotos-adicionais">
                     <?php while($foto = $fotos_adicionais->fetch_assoc()): ?>
-                        <div class="foto-item">
-                            <img src="<?= htmlspecialchars($foto['URL']) ?>" alt="Foto da espécie">
+                        <div class="foto-item img-rounded">
+                            <img src="<?= htmlspecialchars($foto['URL']) ?>" class="img-cover" alt="Foto da espécie">
                         </div>
                     <?php endwhile; ?>
                 </div>
@@ -124,7 +121,7 @@ $postagens = get_postagens_by_especie($especie_id);
         <?php endif; ?>
 
         <?php if($postagens->num_rows > 0): ?>
-            <div class="info-section">
+            <div class="info-section card-white">
                 <h2><i class="fas fa-camera"></i> Avistamentos Recentes</h2>
                 <div class="postagens-relacionadas">
                     <?php while($post = $postagens->fetch_assoc()): ?>
@@ -138,7 +135,11 @@ $postagens = get_postagens_by_especie($especie_id);
                                     </div>
                                 <?php endif; ?>
                                 <div>
-                                    <h4><?= htmlspecialchars($post['Nome_Usuario']) ?></h4>
+                                    <h4><?= htmlspecialchars($post['Nome_Usuario']) ?>
+                                    <?php if(is_especialista($post['Id_Usuario'])): ?>
+                                            <i class="fas fa-check-circle verified-badge" title="Especialista verificado"></i>
+                                        <?php endif; ?>
+                                </h4>
                                     <small><?= date('d/m/Y', strtotime($post['DataHora_Envio'])) ?></small>
                                 </div>
                             </div>
@@ -151,7 +152,7 @@ $postagens = get_postagens_by_especie($especie_id);
             </div>
         <?php endif; ?>
 
-        <div class="mapa-section">
+        <div class="mapa-section card-white">
             <h2><i class="fas fa-map-marked-alt"></i> Distribuição Geográfica</h2>
             <div class="mapa-container" id="mapa-distribuicao"></div>
             <div class="mapa-info">
@@ -166,14 +167,14 @@ $postagens = get_postagens_by_especie($especie_id);
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Coordenadas de Jundiaí
-        const jundiaiCoords = [-23.1861, -46.8844];
+        const jundiaiCoords = [-23.2369, -46.9376];
         
         // Inicializa o mapa
         const mapa = L.map('mapa-distribuicao').setView(jundiaiCoords, 12);
         
         // Adiciona o layer do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            attribution: '&copy; OpenStreetMap'
         }).addTo(mapa);
 
         // Adiciona marcadores para cada postagem
@@ -189,10 +190,19 @@ $postagens = get_postagens_by_especie($especie_id);
                     <?= htmlspecialchars(substr($post['Texto'], 0, 100)) ?>...
                 `)
                 .addTo(mapa);
+                mapa.setView([<?= $post['Latitude'] ?>, <?= $post['Longitude'] ?>], 14);
         <?php 
             endif;
         endwhile; 
         ?>
+
+
+        // Adicionar controle de escala
+        L.control.scale({
+            position: 'bottomleft',
+            metric: true,
+            imperial: false
+        }).addTo(mapa);
     </script>
 </body>
 </html> 

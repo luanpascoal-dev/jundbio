@@ -1,26 +1,24 @@
 <?php
 session_start();
+
+$title = "Política de Privacidade";
+$css = ['termos_privacidade'];
+
 include 'database.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidade - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/privacidade.css">
-</head>
+<?php
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <div class="container">
-        <div class="privacy-container">
+        <div class="box-container">
             <h1>Política de Privacidade</h1>
             
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>1. Coleta de Informações</h2>
                 <p>O JundBio coleta as seguintes informações:</p>
                 <ul>
@@ -32,7 +30,7 @@ include 'database.php';
                 </ul>
             </div>
 
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>2. Uso das Informações</h2>
                 <p>As informações coletadas são utilizadas para:</p>
                 <ul>
@@ -44,7 +42,7 @@ include 'database.php';
                 </ul>
             </div>
 
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>3. Proteção de Dados</h2>
                 <p>O JundBio se compromete a:</p>
                 <ul>
@@ -55,7 +53,7 @@ include 'database.php';
                 </ul>
             </div>
 
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>4. Cookies</h2>
                 <p>Utilizamos cookies para:</p>
                 <ul>
@@ -65,7 +63,7 @@ include 'database.php';
                 </ul>
             </div>
 
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>5. Seus Direitos</h2>
                 <p>Você tem direito a:</p>
                 <ul>
@@ -76,7 +74,7 @@ include 'database.php';
                 </ul>
             </div>
 
-            <div class="privacy-section">
+            <div class="box-section">
                 <h2>6. Contato</h2>
                 <p>Para questões sobre privacidade, entre em contato através do e-mail: privacidade@jundbio.com.br</p>
             </div>

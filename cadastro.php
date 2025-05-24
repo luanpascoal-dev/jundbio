@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+$title = "Cadastro";
+$css = ['login'];
+
 include 'functions/not_logado.php';
 
 include 'database.php';
@@ -51,10 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($insert) {
                 $_SESSION['success'] = "Cadastro realizado com sucesso! Redirecionando...";
+
                 // Redirecionar para login após 2 segundos
                 header("refresh:2;url=login");
             } else {
-                $_SESSION['error'] = "Erro ao cadastrar. Tente novamente.";
+                $_SESSION['error'] = "Erro ao cadastrar. Tente novamente!";
             }
             
         }
@@ -62,16 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - JundBio</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php 
+include 'layouts/header.php'; 
+?>
+
 <body>
 
     <main class="main-content">
@@ -93,23 +91,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <i class="fas fa-user"></i>
                                     Nome
                                 </label>
-                                <input type="text" id="nome" name="nome" 
+                                <input type="text" id="nome" name="nome" autocomplete="off"
                                        value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>"
                                        placeholder="Seu nome completo" required>
                             </div>
-
+                            
                             <div class="form-group">
                                 <label for="email">
                                     <i class="fas fa-envelope"></i>
                                     Email
                                 </label>
-                                <input type="email" id="email" name="email"
+                                <input type="email" id="email" name="email" autocomplete="off"
                                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                        placeholder="seu@email.com" required>
                             </div>
+                            
                         </div>
 
                         <div class="form-column">
+                            
+
                             <div class="form-group">
                                 <label for="senha">
                                     <i class="fas fa-lock"></i>
@@ -127,16 +128,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="password" id="confirmar_senha" name="confirmar_senha"
                                        placeholder="Confirme sua senha" required>
                             </div>
-
-                            <div class="form-group checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="termos" required>
-                                    <span>Li e aceito os <a href="termos" target="_blank">termos de uso</a> e <a href="privacidade.php" target="_blank">política de privacidade</a></span>
-                                </label>
-                            </div>
                         </div>
+                        
                     </div>
-
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="termos" required>
+                            <span>Li e aceito os <a href="termos" target="_blank">termos de uso</a> e <a href="privacidade" target="_blank">política de privacidade</a></span>
+                        </label>
+                    </div>
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-user-plus"></i>
                         Criar Conta

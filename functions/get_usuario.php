@@ -1,16 +1,22 @@
 <?php
 
-function get_usuarios() {
+function get_usuarios($no_admin = false, $limit = null) {
     global $conn;
-    $stmt = $conn->prepare("SELECT *, COUNT(Id) as total FROM USUARIO GROUP BY Id ORDER BY Id");
+    $query = "SELECT *, COUNT(Id) as total FROM USUARIO";
+    if ($no_admin) $query .= " WHERE Id != 1";
+    $query .= " GROUP BY Id ORDER BY Id";
+    if ($limit) $query .= " LIMIT $limit";
+    $stmt = $conn->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
     return $result;
 }
 
-function get_total_usuarios() {
+function get_total_usuarios($no_admin = false) {
     global $conn;
-    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM USUARIO");
+    $query = "SELECT COUNT(*) as total FROM USUARIO";
+    if ($no_admin) $query .= " WHERE Id != 1";
+    $stmt = $conn->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->fetch_assoc()['total'];
@@ -31,17 +37,23 @@ function get_usuario_by_email($email) {
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-    return $result;
+    return $result->fetch_assoc();
 }
 
 function get_id_by_email($email) {
     global $conn;
+    
     $stmt = $conn->prepare("SELECT Id FROM USUARIO WHERE Email = ?");
+    if ($stmt === false) return null;
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    return $row['Id'];
+    if ($result && $row = $result->fetch_assoc()) {
+        $stmt->close();
+        return $row['Id'];
+    }
+    $stmt->close();
+    return null;
 }
 
 function get_pontos_by_id($id) {
@@ -63,6 +75,15 @@ function get_fotos_by_id($id) {
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->fetch_assoc()['total'];
+}
+
+function get_avatar_by_id($id) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT Foto FROM USUARIO WHERE Id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc()['Foto'];
 }
 
 function get_comentarios_by_id($id) {

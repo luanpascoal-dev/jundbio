@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+$title = "Espécies";
+$css = ['especies'];
+
 include 'database.php';
 
 include 'functions/get_especie.php';
@@ -11,18 +14,12 @@ include 'functions/get_image.php';
 $especies = get_especies();
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espécies - JundBio</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/especies.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <main class="main-content">
         <div class="page-header">
@@ -31,6 +28,9 @@ $especies = get_especies();
         </div>
 
         <div class="container">
+
+            <?php include 'layouts/alerts.php'; ?>
+
             <div class="actions-bar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
@@ -38,8 +38,8 @@ $especies = get_especies();
                 </div>
                 
                 <div class="filter-group">
-                    <select class="filter-select" id="classificacaoFilter">
-                        <option value="">Todas as classificações</option>
+                    <select class="filter-select" id="tipoFilter">
+                        <option value="">Todas as espécies</option>
                         <option value="fauna">Fauna</option>
                         <option value="flora">Flora</option>
                     </select>
@@ -53,14 +53,20 @@ $especies = get_especies();
                     </select>
                 </div>
             </div>
-
+            <?php if ($especies->num_rows <= 0): ?>
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhuma espécie encontrada</h3>
+                    <p>Tente ajustar os filtros ou realizar uma nova busca</p>
+                </div>
+            <?php else: ?>
             <div class="especies-grid">
 
                 <?php while ($especie = $especies->fetch_assoc()): 
                     $foto = get_especie_image($especie['Id']);
                     ?>
                     <div class="especie-card" 
-                         data-classificacao="<?= strtolower($especie['Tipo']) ?>"
+                         data-tipo="<?= strtolower($especie['Tipo']) ?>"
                          data-status="<?= strtolower($especie['StatusExtincao']) ?>">
                         <div class="especie-imagem">
                             <?php if ($foto && file_exists($foto)): ?>
@@ -108,13 +114,6 @@ $especies = get_especies();
                     </div>
                 <?php endwhile; ?>
             </div>
-
-            <?php if ($especies->num_rows === 0): ?>
-                <div class="no-results">
-                    <i class="fas fa-search"></i>
-                    <h3>Nenhuma espécie encontrada</h3>
-                    <p>Tente ajustar os filtros ou realizar uma nova busca</p>
-                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -124,31 +123,35 @@ $especies = get_especies();
     <script>
         // Filtros e busca
         const searchInput = document.getElementById('searchInput');
-        const classificacaoFilter = document.getElementById('classificacaoFilter');
+        const tipoFilter = document.getElementById('tipoFilter');
         const statusFilter = document.getElementById('statusFilter');
         const cards = document.querySelectorAll('.especie-card');
 
         function filterCards() {
             const searchTerm = searchInput.value.toLowerCase();
-            const classificacaoValue = classificacaoFilter.value.toLowerCase();
+            const tipoValue = tipoFilter.value.toLowerCase();
             const statusValue = statusFilter.value.toLowerCase();
 
             cards.forEach(card => {
                 const nome = card.querySelector('h3').textContent.toLowerCase();
+                const nomeCientifico = card.querySelector('.nome-cientifico').textContent.toLowerCase();
                 const descricao = card.querySelector('.descricao').textContent.toLowerCase();
-                const classificacao = card.dataset.classificacao;
+                const familia = card.querySelector('.familia').textContent.toLowerCase();
+                const classificacao = card.querySelector('.classificacao').textContent.toLowerCase();
+
+                const tipo = card.dataset.tipo;
                 const status = card.dataset.status;
 
-                const matchesSearch = nome.includes(searchTerm) || descricao.includes(searchTerm);
-                const matchesClassificacao = !classificacaoValue || classificacao === classificacaoValue;
+                const matchesSearch = nome.includes(searchTerm) || nomeCientifico.includes(searchTerm) || descricao.includes(searchTerm) || familia.includes(searchTerm) || classificacao.includes(searchTerm);
+                const matchesTipo = !tipoValue || tipo === tipoValue;
                 const matchesStatus = !statusValue || status === statusValue;
 
-                card.style.display = matchesSearch && matchesClassificacao && matchesStatus ? 'block' : 'none';
+                card.style.display = matchesSearch && matchesTipo && matchesStatus ? 'block' : 'none';
             });
         }
 
         searchInput.addEventListener('input', filterCards);
-        classificacaoFilter.addEventListener('change', filterCards);
+        tipoFilter.addEventListener('change', filterCards);
         statusFilter.addEventListener('change', filterCards);
     </script>
 </body>

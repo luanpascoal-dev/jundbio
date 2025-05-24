@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS USUARIO (
     Pontos INTEGER NOT NULL DEFAULT 0,
     Ativo BOOLEAN NOT NULL DEFAULT TRUE,
     Foto VARCHAR(256),
-    DataRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    Biografia VARCHAR(256),
+    Ocupacao VARCHAR(64),
+    DataRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UltimoLogin TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ESPECIE (
@@ -96,7 +99,7 @@ CREATE TABLE IF NOT EXISTS HISTORICO (
 
 CREATE TABLE IF NOT EXISTS COMENTARIO (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    Texto VARCHAR(1024),
+    Texto VARCHAR(512),
     DataHora TIMESTAMP,
     Id_Usuario INTEGER,
     Id_Postagem INTEGER,
@@ -104,6 +107,6 @@ CREATE TABLE IF NOT EXISTS COMENTARIO (
 	FOREIGN KEY (Id_Postagem) REFERENCES POSTAGEM (Id) ON DELETE CASCADE
 );
 
-INSERT INTO `usuario` (`Id`, `Nome`, `Tipo`, `Email`, `Senha`, `Pontos`, `Ativo`) VALUES (NULL, 'Luan Pascoal', 'ADMIN', 'luanpascoal@email.com', '$2y$10$XGTFx8aTDgCy9nMVoIF7buLaSFkXZwcs9A8BqH2IyDUFF7F0taPZq', '0', '1'); 
+INSERT INTO USUARIO (`Nome`, `Tipo`, `Email`, `Senha`, `Pontos`, `Ativo`) VALUES ('Administrador', 'ADMIN', 'admin@jundbio.com', '$2y$10$XGTFx8aTDgCy9nMVoIF7buLaSFkXZwcs9A8BqH2IyDUFF7F0taPZq', '0', '1'); 
 
-INSERT INTO `especie` (`Id`, `NomeComum`, `NomeCientifico`, `Familia`, `Classificacao`, `Descricao`, `StatusExtincao`) VALUES (NULL, 'Desconhecido', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO ESPECIE (`Id`, `NomeComum`, `NomeCientifico`, `Familia`, `Classificacao`, `Descricao`, `StatusExtincao`) VALUES (NULL, 'Desconhecido', NULL, NULL, NULL, NULL, NULL);

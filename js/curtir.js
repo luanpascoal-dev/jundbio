@@ -1,5 +1,5 @@
 function curtirPost(postId) {
-    fetch('curtir.php', {
+    fetch('functions/curtir.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -15,15 +15,14 @@ function curtirPost(postId) {
             const likeCount = likeButton.querySelector(`[data-count-id="${postId}"]`);
             
             // Atualizar o ícone
-            if (data.acao !== 'curtir') {
-                likeButton.classList.add('like-btn');
+            if (data.acao === 'curtir') {
+                likeButton.classList.add('liked');
+                likeIcon.classList.remove('fa-regular');
+                likeIcon.classList.add('fa-solid');
+            } else {
+                likeButton.classList.remove('liked');
                 likeIcon.classList.remove('fa-solid');
                 likeIcon.classList.add('fa-regular');
-            } else {
-                likeButton.classList.remove('like-btn');
-                likeIcon.classList.add('fa-solid');
-                likeIcon.classList.remove('fa-regular');
-                
             }
             
             // Atualizar o contador

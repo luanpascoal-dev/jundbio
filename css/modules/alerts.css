@@ -1,0 +1,29 @@
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alert-success {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.alert-danger {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+.alert ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.alert li {
+  margin: 0.25rem 0;
+}

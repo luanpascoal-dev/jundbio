@@ -1,11 +1,16 @@
 <?php
 session_start();
+
+$title = "Editar Perfil";
+$css = ['editar_perfil'];
+
 include 'database.php';
 
 include 'functions/is_logado.php';
 include 'functions/get_usuario.php';
 
 $usuario_id = $_SESSION['id'];
+
 $usuario = get_usuario($usuario_id);
 
 // Processar o formulário de atualização
@@ -16,26 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha_atual = $_POST['senha_atual'];
     $nova_senha = $_POST['nova_senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
+    $biografia = trim($_POST['biografia']);
+    $ocupacao = trim($_POST['ocupacao']);
     
-    // Verificar se o usuário quer remover a foto
+
+    // Verifica se o usuário quer remover a foto
     if (isset($_POST['remover_foto'])) {
         
-        // Buscar o caminho da foto atual
-        $stmt = $conn->prepare("SELECT Foto FROM USUARIO WHERE Id = ?");
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $usuario = $result->fetch_assoc();
+        // Busca o caminho da foto atual
+        $usuario = get_avatar_by_id($usuario_id);
         
         // Se existir uma foto, deletar o arquivo
         if ($usuario['Foto'] && file_exists($usuario['Foto'])) {
             unlink($usuario['Foto']);
         }
         
-        // Atualizar o banco removendo a foto
-        $stmt = $conn->prepare("UPDATE USUARIO SET Foto = NULL WHERE Id = ?");
-        $stmt->bind_param("i", $usuario_id);
-        $stmt->execute();
+        // Atualiza o banco de dados removendo a foto
+        remove_avatar($usuario_id);
 
         unset($_SESSION['foto']);
         
@@ -43,12 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: editar_perfil');
         exit;
     }
+
     // Processar upload de nova foto
     $foto_perfil = $usuario['Foto']; // Manter a foto atual por padrão
+
     if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === UPLOAD_ERR_OK) {
+
         $arquivo = $_FILES['foto_perfil'];
         $extensao = strtolower(pathinfo($arquivo['name'], PATHINFO_EXTENSION));
-        $extensoes_permitidas = ['jpg', 'jpeg', 'png', 'gif'];
+        $extensoes_permitidas = ['jpg', 'jpeg', 'png'];
         
         if (!in_array($extensao, $extensoes_permitidas)) {
             $_SESSION['error'] = "Formato de arquivo não permitido. Use: " . implode(', ', $extensoes_permitidas);
@@ -56,7 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = "O arquivo é muito grande. Tamanho máximo: 5MB";
         } else {
             $nome_arquivo = uniqid('') . '.' . $extensao;
+
             $diretorio = 'uploads/avatars/';
+
             // Criar diretório se não existir
             if (!file_exists($diretorio)) {
                 mkdir($diretorio, 0777, true);
@@ -107,16 +114,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (empty($_SESSION['error'])) {
+                $execute = null;
                 // Atualizar dados do usuário
                 if (!empty($nova_senha)) {
                     $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
-                    $stmt = $conn->prepare("UPDATE USUARIO SET Nome = ?, Email = ?, Senha = ?, Foto = ? WHERE Id = ?");
-                    $stmt->bind_param("ssssi", $nome, $email, $senha_hash, $foto_perfil, $usuario_id);
+                    $execute = update_usuario($usuario_id, $nome, $email, $senha_hash, $foto_perfil, $biografia, $ocupacao);
                 } else {
-                    $stmt = $conn->prepare("UPDATE USUARIO SET Nome = ?, Email = ?, Foto = ? WHERE Id = ?");
-                    $stmt->bind_param("sssi", $nome, $email, $foto_perfil, $usuario_id);
+                    $execute = update_usuario_sem_senha($usuario_id, $nome, $email, $foto_perfil, $biografia, $ocupacao);
                 }
-                if ($stmt->execute()) {
+                if ($execute) {
                     $_SESSION['usuario'] = $nome;
                     $_SESSION['foto'] = $foto_perfil;
                     $_SESSION['success'] = "Perfil atualizado com sucesso!";
@@ -133,17 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil - JundBio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/main.css">
-</head>
+<?php include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <div class="container">
         
@@ -191,17 +191,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="form-group">
                             <label for="nome">Nome</label>
-                            <input type="text" id="nome" name="nome" value="<?php echo htmlspecialchars($usuario['Nome']); ?>" required>
+                            <input type="text" id="nome" max-length="128" name="nome" value="<?php echo htmlspecialchars($usuario['Nome']); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($usuario['Email']); ?>" required>
+                            <input type="email" id="email" max-length="256" name="email" value="<?php echo htmlspecialchars($usuario['Email']); ?>" required>
                         </div>
+
                     </div>
 
                     <!-- Coluna da Direita - Alterar Senha -->
                     <div class="form-section">
+
+                        <div class="form-group">
+                            <label for="ocupacao">Ocupação</label>
+                            <input type="text" id="ocupacao" max-length="64" name="ocupacao" value="<?php echo htmlspecialchars($usuario['Ocupacao']); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="biografia">Biografia</label>
+                            <textarea id="biografia" max-length="256" name="biografia"><?php echo htmlspecialchars($usuario['Biografia']); ?></textarea>
+                        </div>
+                        
                         <h2>Alterar Senha</h2>
                         <div class="form-group">
                             <label for="senha_atual">Senha Atual</label>
@@ -228,202 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
     </div>
-
-    <style>
-    .edit-profile-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .edit-profile-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid var(--border-color);
-    }
-
-    .edit-profile-header h1 {
-        color: var(--primary-green);
-        margin: 0;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
-
-    .form-section {
-        padding: 1.5rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        height: fit-content;
-    }
-
-    .form-section h2 {
-        color: var(--text-dark);
-        margin: 0 0 1.5rem;
-        font-size: 1.25rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--text-dark);
-        font-weight: 500;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .form-group input:focus {
-        outline: none;
-        border-color: var(--primary-green);
-        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-    }
-
-    .profile-upload {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .current-photo {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: #f8f9fa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .current-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .no-photo {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary-green);
-        color: white;
-    }
-
-    .no-photo i {
-        font-size: 3rem;
-    }
-
-    .photo-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: center;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .remove-photo-form {
-        margin-top: 0.5rem;
-        width: 100%;
-    }
-
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .btn-danger:hover {
-        background: #c82333;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        margin-top: 2rem;
-        padding-top: 1rem;
-        border-top: 2px solid var(--border-color);
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        background: var(--primary-green);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #2e7d32;
-        transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-        background: #e5e7eb;
-        color: var(--text-dark);
-    }
-
-    .btn-secondary:hover {
-        background: #d1d5db;
-    }
-
-    @media (max-width: 768px) {
-        .edit-profile-container {
-            margin: 1rem;
-            padding: 1rem;
-        }
-
-        .edit-profile-header {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-        }
-
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .form-section {
-            padding: 1rem;
-        }
-    }
-    </style>
 
     <script>
     function previewImage(input) {

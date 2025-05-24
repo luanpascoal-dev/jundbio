@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+$title = "Login";
+$css = ['login'];
+
 include 'functions/not_logado.php';
 
 include 'database.php';
@@ -20,9 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $result = get_usuario_by_email($email);
 
-
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
+    if ($result) {
+        $user = $result;
 
         if (password_verify($senha, $user['Senha']) && $user['Ativo'] == 1) {
 
@@ -32,6 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['foto'] = $user['Foto'];
 
             $_SESSION['success'] = "Login realizado com sucesso";
+
+            $stmt = $conn->prepare("UPDATE USUARIO SET UltimoLogin = CURRENT_TIMESTAMP WHERE Id = ?");
+            $stmt->bind_param("i", $user['Id']);
+            $stmt->execute();
+            $stmt->close();
 
             if($user['Tipo'] == 'ADMIN') {
                 header("Location: admin");
@@ -47,16 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - JundBio</title>
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php 
+include 'layouts/header.php'; 
+?>
+
 <body>
     <main class="main-content">
         <div class="auth-container two-columns">
@@ -75,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <i class="fas fa-envelope"></i>
                             Email
                         </label>
-                        <input type="email" id="email" name="email"
+                        <input type="email" id="email" name="email" autocomplete="off"
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                placeholder="seu@email.com" required>
                     </div>

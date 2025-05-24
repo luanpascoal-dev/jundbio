@@ -1,21 +1,19 @@
 <?php
 session_start();
+
+$title = "Sobre";
+$css = ['sobre'];
+
 include 'database.php';
-include 'functions/is_logado.php';
+
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre - JundBio</title>
-    <link rel="stylesheet" href="css/sobre.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
+
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <div class="container">
         <div class="about-section">

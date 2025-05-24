@@ -1,30 +1,25 @@
 <?php
 session_start();
 
+$css = ['index'];
+
 include 'database.php';
 
 include 'functions/get_postagens.php';
 
 include 'functions/get_nivel.php';
 
-include 'functions/curtida.php';
+include 'functions/get_curtidas.php';
 
 include 'functions/get_usuario.php';
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JundBio - Serra do Japi</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<?php 
+include 'layouts/header.php'; 
+include 'layouts/navbar.php';
+?>
 <body>
-    <?php include 'layouts/header.php'; ?>
 
     <main class="main-content">
         <div class="page-header">
@@ -57,21 +52,23 @@ include 'functions/get_usuario.php';
                 </div>
             </div>
 
-            <div class="postagens">
+            
                 <?php
                     $tipo = $_GET['tipo'] ?? 'recentes';
                     $postagens = get_postagens($tipo);
 
-                    if($postagens->num_rows <= 0) {
-                        echo '<div class="no-posts">
+                    if($postagens->num_rows <= 0): ?>
+                        <div class="no-results">
                                 <i class="fas fa-leaf"></i>
-                                <p>Nenhuma postagem encontrada</p>
+                                <h3>Nenhuma postagem encontrada</h3>
                                 <p class="text-light">Seja o primeiro a compartilhar um avistamento!</p>
-                              </div>';
-                    }
+                              </div>
+                    <?php
+                    else:
 
-                    while($post = $postagens->fetch_assoc()) {
+                    while($post = $postagens->fetch_assoc()):
                 ?>
+                <div class="postagens"
                     <div class="postagem">
                         <div class="postagem-header">
                             <div class="user-info">
@@ -102,7 +99,7 @@ include 'functions/get_usuario.php';
 
                         <div class="postagem-imagem">
                         <?php if($post['Foto'] && file_exists($post['Foto'])): ?>
-                            <a href="post?id=<?= $post['Id'] ?>">
+                            <a href="verpost?id=<?= $post['Id'] ?>">
                                 <img src="<?= htmlspecialchars($post['Foto']) ?>" alt="Imagem da postagem">
                             </a>
                         <?php else: ?>
@@ -114,11 +111,11 @@ include 'functions/get_usuario.php';
                         
                         <div class="postagem-footer">
                             <div class="interactions">
-                                <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="btn btn-danger btn-sm <?php if(!has_curtida($_SESSION['id'], $post['Id'])) echo 'like-btn'; ?>" data-post-id="<?= $post['Id'] ?>">
+                                <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="like-btn btn-sm <?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'liked' : ''; ?>" data-post-id="<?= $post['Id'] ?>">
                                 <i class="<?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
                                 <span data-count-id="<?php echo $post['Id']; ?>"><?php echo $post['Curtidas']; ?></span>
                                 </button>
-                                <a href="post?id=<?= $post['Id'] ?>" class="btn btn-primary btn-sm comment-btn">
+                                <a href="verpost?id=<?= $post['Id'] ?>" class="btn btn-primary btn-sm comment-btn">
                                     <i class="fa-solid fa-comment-dots"></i>
                                     <span><?= $post['Comentarios'] ?></span>
                                 </a>
@@ -132,7 +129,8 @@ include 'functions/get_usuario.php';
                         </div>
                     </div>
                 <?php
-                    }
+                    endwhile;
+                endif;
                 ?>
             </div>
         </div>
