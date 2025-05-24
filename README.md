@@ -66,7 +66,7 @@ A Serra do Japi é um importante remanescente de Mata Atlântica no interior pau
 
 O projeto está organizado da seguinte forma:
 
-jundbio-main/
+JundBio/
 ├── admin/                # Arquivos do painel administrativo
 │   ├── especies.php
 │   ├── index.php
@@ -117,7 +117,7 @@ jundbio-main/
     * Um cliente MySQL (Ex: phpMyAdmin, DBeaver, MySQL Workbench) para importar o banco.
 
 2.  **Configuração:**
-    * Clone ou baixe este repositório para o diretório `htdocs` (XAMPP) ou o diretório web equivalente do seu servidor.
+    * Clone ou baixe este repositório para o diretório `htdocs` (XAMPP) ou o diretório web equivalente do seu servidor e altere o nome para `JundBio`.
     * **Banco de Dados:**
         * Crie um banco de dados chamado `jundbio` (ou o nome definido em `database.php`).
         * Importe o arquivo `Codigo.sql` para criar as tabelas e inserir dados iniciais (como o usuário administrador e a espécie "Desconhecido").
@@ -126,12 +126,12 @@ jundbio-main/
 
 3.  **Acesso:**
     * Inicie seu servidor Apache e MySQL.
-    * Acesse o projeto no seu navegador, geralmente através de `http://localhost/jundbio-main/` (o caminho pode variar dependendo de onde você colocou os arquivos).
+    * Acesse o projeto no seu navegador, geralmente através de `http://localhost/JundBio/` (o caminho pode variar dependendo de onde você colocou os arquivos).
 
 4.  **Credenciais de Administrador Padrão:**
     * **Email:** `admin@jundbio.com`
-    * **Senha:** `admin123` (Conforme o hash em `Codigo.sql`: `$2y$10$XGTFx8aTDgCy9nMVoIF7buLaSFkXZwcs9A8BqH2IyDUFF7F0taPZq`)
-    * Acesse o painel administrativo em `http://localhost/jundbio-main/admin/`.
+    * **Senha:** `admin123`
+    * Acesse o painel administrativo em `http://localhost/JundBio/admin/`.
 
 ## 🤝 Contribuição
 
