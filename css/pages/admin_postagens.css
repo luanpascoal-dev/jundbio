@@ -1,0 +1,105 @@
+.post-card-admin {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+.post-card-admin-image {
+    width: 180px; /* Aumentei um pouco */
+    min-width: 180px;
+    max-height: 200px; /* Limita altura da imagem */
+    object-fit: cover;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #e0e0e0;
+}
+.post-card-admin-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.post-card-admin-image .no-image-placeholder {
+    font-size: 2.5rem;
+    color: #ccc;
+}
+.post-card-admin-content {
+    padding: 1rem 1.5rem; /* Mais padding */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.post-card-admin-header {
+    margin-bottom: 0.75rem; /* Mais espaço */
+}
+.post-card-admin-title {
+    font-size: 1.2rem; /* Título um pouco maior */
+    font-weight: 600;
+    color: var(--primary-green); /* Cor primária para o título */
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.post-card-admin-meta {
+    font-size: 0.8rem; /* Meta menor */
+    color: #777; /* Cinza mais escuro para meta */
+    margin-bottom: 1rem; /* Espaço abaixo do meta */
+    display: flex; /* Flex para alinhar itens */
+    flex-wrap: wrap; /* Quebra de linha se necessário */
+    gap: 10px; /* Espaço entre itens do meta */
+}
+.post-card-admin-meta span { margin-right: 0; } /* Remover margem direita padrão */
+.post-card-admin-meta i { margin-right: 5px; color: var(--secondary-green); } /* Ícones com cor secundária */
+
+.post-card-admin-body {
+    font-size: 0.95rem; /* Corpo do texto um pouco maior */
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 1.5rem; /* Mais espaço abaixo do corpo */
+    flex-grow: 1;
+    max-height: 100px; /* Limita altura e adiciona scroll se necessário */
+    overflow-y: auto;
+}
+ /* Custom scrollbar for webkit browsers */
+.post-card-admin-body::-webkit-scrollbar {
+    width: 6px;
+}
+.post-card-admin-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+.post-card-admin-body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+.post-card-admin-body::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.post-card-admin-actions {
+    display: flex;
+    gap: 0.75rem; /* Mais espaço entre botões */
+    margin-top: auto;
+    padding-top: 1rem; /* Espaço acima dos botões */
+    border-top: 1px solid #eee; /* Linha sutil acima das ações */
+}
+.post-card-admin-status {
+    padding: 0.3rem 0.8rem; /* Padding ajustado */
+    border-radius: 15px; /* Mais arredondado */
+    font-size: 0.75rem; /* Fonte menor para status */
+    font-weight: 600; /* Mais peso na fonte */
+    text-transform: uppercase; /* Caixa alta */
+    letter-spacing: 0.5px; /* Espaçamento entre letras */
+}
+/* Cores dos badges de status (já existentes em admin.css ou badges.css, mas podem ser ajustadas) */
+.status-pendente { background-color: #ffeeba; color: #856404; border: 1px solid #ffd32a; }
+.status-aprovado { background-color: #c3e6cb; color: #155724; border: 1px solid #5cb85c; }
+.status-negado { background-color: #f5c6cb; color: #721c24; border: 1px solid #d9534f; }
+
+.pagination .btn { margin: 0 3px; }
+.pagination .current { background-color: var(--primary-green); color: white; border-color: var(--primary-green); }

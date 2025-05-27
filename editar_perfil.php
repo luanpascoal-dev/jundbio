@@ -7,7 +7,9 @@ $css = ['editar_perfil'];
 include 'database.php';
 
 include 'functions/is_logado.php';
+include 'functions/get_image.php';
 include 'functions/get_usuario.php';
+include 'functions/update_usuario.php';
 
 $usuario_id = $_SESSION['id'];
 
@@ -30,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Busca o caminho da foto atual
         $usuario = get_avatar_by_id($usuario_id);
-        
+
         // Se existir uma foto, deletar o arquivo
-        if ($usuario['Foto'] && file_exists($usuario['Foto'])) {
-            unlink($usuario['Foto']);
+        if ($usuario && file_exists($usuario)){
+            unlink($usuario);
         }
         
         // Atualiza o banco de dados removendo a foto
@@ -178,7 +180,7 @@ include 'layouts/navbar.php';
                                 </div>
                                 <div class="photo-actions">
                                     <input type="file" id="foto_perfil" name="foto_perfil" accept="image/*" onchange="previewImage(this)">
-                                    <small>Formatos permitidos: JPG, JPEG, PNG, GIF. Tamanho máximo: 5MB</small>
+                                    <small>Formatos permitidos: JPG, JPEG, PNG. Tamanho máximo: 5MB</small>
                                     
                                     <?php if (!empty($usuario['Foto'])): ?>
                                         <button type="button" class="btn btn-danger" onclick="removerFoto()">
@@ -191,12 +193,12 @@ include 'layouts/navbar.php';
 
                         <div class="form-group">
                             <label for="nome">Nome</label>
-                            <input type="text" id="nome" max-length="128" name="nome" value="<?php echo htmlspecialchars($usuario['Nome']); ?>" required>
+                            <input type="text" id="nome" max-length="128" name="nome" autocomplete="off" value="<?php echo htmlspecialchars($usuario['Nome']); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" max-length="256" name="email" value="<?php echo htmlspecialchars($usuario['Email']); ?>" required>
+                            <input type="email" id="email" max-length="256" name="email" autocomplete="off" value="<?php echo htmlspecialchars($usuario['Email']); ?>" required>
                         </div>
 
                     </div>
@@ -206,12 +208,12 @@ include 'layouts/navbar.php';
 
                         <div class="form-group">
                             <label for="ocupacao">Ocupação</label>
-                            <input type="text" id="ocupacao" max-length="64" name="ocupacao" value="<?php echo htmlspecialchars($usuario['Ocupacao']); ?>">
+                            <input type="text" id="ocupacao" max-length="64" name="ocupacao" autocomplete="off" value="<?php echo htmlspecialchars($usuario['Ocupacao']); ?>">
                         </div>
 
                         <div class="form-group">
                             <label for="biografia">Biografia</label>
-                            <textarea id="biografia" max-length="256" name="biografia"><?php echo htmlspecialchars($usuario['Biografia']); ?></textarea>
+                            <textarea id="biografia" max-length="256" name="biografia" autocomplete="off" ><?php echo htmlspecialchars($usuario['Biografia']); ?></textarea>
                         </div>
                         
                         <h2>Alterar Senha</h2>

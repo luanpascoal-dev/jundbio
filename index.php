@@ -65,10 +65,12 @@ include 'layouts/navbar.php';
                               </div>
                     <?php
                     else:
-
-                    while($post = $postagens->fetch_assoc()):
-                ?>
-                <div class="postagens"
+                        ?>
+                        <div class="postagens">
+                        <?php
+                            while($post = $postagens->fetch_assoc()):
+                        ?>
+                
                     <div class="postagem">
                         <div class="postagem-header">
                             <div class="user-info">
@@ -127,9 +129,12 @@ include 'layouts/navbar.php';
                                 </span>
                             </div>
                         </div>
-                    </div>
+                        </div>
                 <?php
                     endwhile;
+                    ?>
+                </div>
+                <?php
                 endif;
                 ?>
             </div>

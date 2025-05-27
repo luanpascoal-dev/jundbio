@@ -59,7 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'alterar_status':
             $usuario_id = (int)$_POST['usuario_id'];
             $novo_status = $_POST['status'];
-            
+            if($usuario_id == 1){
+                $_SESSION['error'] = "Não é possível alterar o status do usuário administrador principal.";
+                break;
+            }
+            if($usuario_id == $_SESSION['id']){
+                $_SESSION['error'] = "Não é possível alterar seu próprio status do usuário.";
+                break;
+            }
             try {
                 $stmt = $conn->prepare("UPDATE USUARIO SET Ativo = ? WHERE Id = ?");
                 $stmt->bind_param("si", $novo_status, $usuario_id);
@@ -77,7 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'alterar_tipo':
             $usuario_id = (int)$_POST['usuario_id'];
             $novo_tipo = $_POST['tipo'];
-            
+            if($usuario_id == 1){
+                $_SESSION['error'] = "Não é possível alterar o tipo do usuário administrador principal.";
+                break;
+            }
+            if($usuario_id == $_SESSION['id']){
+                $_SESSION['error'] = "Não é possível alterar seu próprio tipo do usuário.";
+                break;
+            }
             try {
                 $stmt = $conn->prepare("UPDATE USUARIO SET Tipo = ? WHERE Id = ?");
                 $stmt->bind_param("si", $novo_tipo, $usuario_id);
@@ -190,7 +204,7 @@ include '../layouts/navbar_admin.php';
         <div class="admin-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2>Gerenciar Usuários</h2>
-                <button class="btn btn-primary" onclick="openModal('novoUsuarioModal')">
+                <button class="btn btn-primary" onclick="window.location.href='novo_usuario'">
                     <i class="fas fa-plus"></i>
                     Novo Usuário
                 </button>
@@ -234,7 +248,7 @@ include '../layouts/navbar_admin.php';
                         <select name="tipo">
                             <option value="">Todos os tipos</option>
                             <option value="admin" <?php echo $filtro_tipo === 'admin' ? 'selected' : ''; ?>>Administradores</option>
-                            <option value="usuario" <?php echo $filtro_tipo === 'usuario' ? 'selected' : ''; ?>>Usuários</option>
+                            <option value="comum" <?php echo $filtro_tipo === 'usuario' ? 'selected' : ''; ?>>Usuários</option>
                         </select>
                     </div>
                     
@@ -287,9 +301,9 @@ include '../layouts/navbar_admin.php';
                                                     <?php if (!empty($usuario['Foto'])): ?>
                                                         <img src="<?php echo '../' . htmlspecialchars($usuario['Foto']); ?>" alt="Foto de perfil" class="user-avatar">
                                                     <?php else: ?>
-                                                        <div class="user-avatar">
-                                                        <?php echo strtoupper(substr($usuario['Nome'], 0, 2)); ?>
-                                                        </div>
+                                                        
+                                                        <?php echo get_default_avatar(); ?>
+                                                        
                                                     <?php endif; ?>
                                                     <div>
                                                         <div class="user-name"><?php echo htmlspecialchars($usuario['Nome']); ?>
@@ -298,9 +312,6 @@ include '../layouts/navbar_admin.php';
                                                         <?php endif; ?>
                                                         </div>
                                                         <div class="user-email"><?php echo htmlspecialchars($usuario['Email']); ?></div>
-                                                        <?php if (!empty($usuario['Ocupacao'])): ?>
-                                                            <div class="user-meta"><?php echo htmlspecialchars($usuario['Ocupacao']); ?></div>
-                                                        <?php endif; ?>
                                                     </div>
                                                     
                                                 </div>
@@ -334,6 +345,10 @@ include '../layouts/navbar_admin.php';
                                                 <a href="editar_usuario?id=<?php echo $usuario['Id']; ?>" class="btn-icon" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                <button type="button" class="btn-icon btn-danger-icon" title="Excluir Usuário"
+                                                        onclick="confirmarExclusao(<?php echo $usuario['Id']; ?>, '<?php echo htmlspecialchars(addslashes($usuario['Nome'])); ?>')">
+                                                    <i class="fas fa-user-times"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -406,7 +421,7 @@ include '../layouts/navbar_admin.php';
                     <label for="tipo">Tipo de Usuário *</label>
                     <select id="tipo" name="tipo" required>
                         <option value="">Selecione...</option>
-                        <option value="usuario">Usuário</option>
+                        <option value="comum">Usuário</option>
                         <option value="admin">Administrador</option>
                     </select>
                 </div>
@@ -474,6 +489,13 @@ include '../layouts/navbar_admin.php';
                 `;
                 document.body.appendChild(form);
                 form.submit();
+            }
+        }
+
+        function confirmarExclusao(id, nome) {
+            if (confirm(`Tem certeza ABSOLUTA que deseja excluir o usuário "${nome}" (ID: ${id})? Suas postagens ficarão órfãs, e seus comentários e curtidas serão removidos.`)) {
+                document.getElementById('idUsuarioParaExcluir').value = id;
+                document.getElementById('formExcluirUsuario').submit();
             }
         }
         

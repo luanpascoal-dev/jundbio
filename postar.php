@@ -15,7 +15,7 @@ include 'functions/get_especie.php';
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $texto = trim($_POST['texto']);
-    $tipo = $_POST['tipo'];
+    $tipo = strtoupper($_POST['tipo']);
     $especie_id = isset($_POST['especie_id']) && $_POST['especie_id'] != '' ? $_POST['especie_id'] : 1;
     $latitude = isset($_POST['latitude']) ? $_POST['latitude'] : null;
     $longitude = isset($_POST['longitude']) ? $_POST['longitude'] : null;
@@ -40,8 +40,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 2. Inserir postagem
-            $stmt = $conn->prepare("INSERT INTO POSTAGEM (Tipo, Texto, Id_Usuario, Status) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("sssi", strtoupper($tipo), $texto, $_SESSION['id'], 'APROVADO');
+            $stmt = $conn->prepare("INSERT INTO POSTAGEM (Tipo, Texto, Id_Usuario) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $tipo, $texto, $_SESSION['id']);
             $stmt->execute();
             $postagem_id = $conn->insert_id;
 

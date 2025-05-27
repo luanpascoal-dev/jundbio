@@ -107,3 +107,11 @@ function is_especialista($id) {
     return $result->num_rows > 0;
 }
 
+function is_admin($id) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT Id FROM USUARIO WHERE Id = ? AND Tipo = 'ADMIN'");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->num_rows > 0;
+}

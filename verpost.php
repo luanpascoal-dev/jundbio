@@ -44,6 +44,14 @@ if (!$post) {
     exit;
 }
 
+if($post['Status'] != 'APROVADO' || $post['Tipo'] != 'AVISTAMENTO') {
+    if(!isset($_SESSION['id']) || !is_admin($_SESSION['id'])) {
+        $_SESSION['error'] = "Postagem não encontrada";
+        header('Location: ./');
+        exit;
+    }
+}
+
 // Buscar fotos da postagem
 $stmt = $conn->prepare("SELECT * FROM FOTO WHERE Id_Postagem = ?");
 $stmt->bind_param("i", $post_id);
