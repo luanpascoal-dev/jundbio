@@ -49,7 +49,7 @@
                         <i class="fas fa-user-cog"></i>
                         Perfil
                     </a>
-                    <a href="../admin/configuracoes" class="admin-nav-dropdown-item">
+                    <a href="../configuracoes" class="admin-nav-dropdown-item">
                         <i class="fas fa-cog"></i>
                         Configurações
                     </a>

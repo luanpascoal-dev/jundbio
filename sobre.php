@@ -65,11 +65,7 @@ include 'layouts/navbar.php';
                 <div class="team-section">
                     <h2>Nossa Equipe</h2>
                     <div class="team-grid">
-                        <div class="team-member">
-                            <img src="assets/team/member1.jpg" alt="Membro da equipe">
-                            <h3>Luan Pascoal</h3>
-                            <p>N/A</p>
-                        </div>
+                        
                         <div class="team-member">
                             <img src="assets/team/member2.jpg" alt="Membro da equipe">
                             <h3>Tomás Wong</h3>

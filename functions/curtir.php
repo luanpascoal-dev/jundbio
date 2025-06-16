@@ -3,9 +3,16 @@ session_start();
 
 include '../database.php';
 
-include 'is_logado.php';
-
 include 'get_curtidas.php';
+
+if(!isset($_SESSION['id']) || !isset($_SESSION['usuario'])) {
+    echo json_encode([
+        'sucesso' => false,
+        'mensagem' => 'Login Necessário',
+        'status' => '401'
+    ]);
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['post_id'])) {
     $post_id = (int) $_POST['post_id'];

@@ -65,10 +65,10 @@
                                 <i class="fas fa-user"></i>
                                 <span>Meu Perfil</span>
                             </a>
-                            <a href="minhas-postagens" class="dropdown-item">
+                            <!-- <a href="minhas-postagens" class="dropdown-item">
                                 <i class="fas fa-list"></i>
                                 <span>Minhas Postagens</span>
-                            </a>
+                            </a> -->
                             <a href="configuracoes" class="dropdown-item">
                                 <i class="fas fa-cog"></i>
                                 <span>Configurações</span>

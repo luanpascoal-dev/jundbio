@@ -7,8 +7,10 @@ function get_nivel($id) {
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    $pontos = $row['Pontos'];
-    return get_nivel_by_pontos($pontos);
+    if($row)
+        return get_nivel_by_pontos($row['Pontos']);
+    else
+        return '';
 }
 
 function get_niveis() {

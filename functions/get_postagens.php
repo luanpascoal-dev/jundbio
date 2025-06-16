@@ -15,7 +15,7 @@ function get_postagens($tipo = 'recentes') {
     LEFT JOIN CURTIDA ct ON ct.Id_Postagem = p.Id
     LEFT JOIN FOTO f ON f.Id_Postagem = p.Id
     LEFT JOIN USUARIO u ON u.Id = p.Id_Usuario
-    WHERE p.Status = 'APROVADO' AND u.Ativo = 1 AND p.Tipo = 'AVISTAMENTO'
+    WHERE p.Status = 'APROVADO' AND p.Tipo = 'AVISTAMENTO' AND (u.Id IS NULL OR u.Ativo = 1)
     GROUP BY p.Id";
 
     if($tipo == 'recentes') {
@@ -78,8 +78,8 @@ function get_postagens_avistamento() {
     global $conn;
     $sql = "SELECT p.*, u.Nome as autor_nome, f.URL as Foto, l.Latitude, l.Longitude
         FROM POSTAGEM p 
-        JOIN FOTO f ON p.Id = f.Id_Postagem 
-        JOIN LOCALIZACAO l ON f.Id_Localizacao = l.Id
+        INNER JOIN FOTO f ON p.Id = f.Id_Postagem 
+        INNER JOIN LOCALIZACAO l ON f.Id_Localizacao = l.Id
         JOIN USUARIO u ON p.Id_Usuario = u.Id
         WHERE l.Latitude IS NOT NULL AND l.Longitude IS NOT NULL 
         AND p.Status = 'APROVADO'  AND p.Tipo = 'AVISTAMENTO'
@@ -93,12 +93,12 @@ function get_postagens_atropelamento() {
     global $conn;
     $sql = "SELECT p.*, u.Nome as autor_nome, l.Latitude, l.Longitude, e.NomeComum, e.NomeCientifico, e.StatusExtincao
         FROM POSTAGEM p 
-        JOIN FOTO f ON p.Id = f.Id_Postagem 
-        JOIN ESPECIE e ON f.Id_Especie = e.Id
-        JOIN LOCALIZACAO l ON f.Id_Localizacao = l.Id
-        JOIN USUARIO u ON p.Id_Usuario = u.Id
+        INNER JOIN FOTO f ON p.Id = f.Id_Postagem 
+        INNER JOIN ESPECIE e ON f.Id_Especie = e.Id
+        INNER JOIN LOCALIZACAO l ON f.Id_Localizacao = l.Id
+        LEFT JOIN USUARIO u ON p.Id_Usuario = u.Id
         WHERE l.Latitude IS NOT NULL AND l.Longitude IS NOT NULL 
-        AND p.Status = 'APROVADO'  AND p.Tipo = 'atropelamento'
+        AND p.Status = 'APROVADO'  AND p.Tipo = 'ATROPELAMENTO'
         ORDER BY p.DataHora_Envio DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute();

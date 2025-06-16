@@ -34,7 +34,7 @@ if ($usuario_id === 1) {
 }
 
 if ($usuario_id === $_SESSION['id']) {
-    $_SESSION['error'] = "Você não pode excluir sua própria conta através desta funcionalidade. Use as configurações da sua conta.";
+    $_SESSION['error'] = "Você não pode excluir sua própria conta através desta funcionalidade.";
     header('Location: usuarios');
     exit;
 }

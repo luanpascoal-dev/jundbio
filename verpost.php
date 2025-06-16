@@ -26,7 +26,7 @@ $stmt = $conn->prepare("
            COUNT(DISTINCT cur.Id_Usuario) as Curtidas,
            l.Latitude, l.Longitude, l.Descricao as Localizacao_Descricao
     FROM POSTAGEM p
-    JOIN USUARIO u ON p.Id_Usuario = u.Id
+    LEFT JOIN USUARIO u ON p.Id_Usuario = u.Id
     LEFT JOIN FOTO f ON p.Id = f.Id_Postagem
     LEFT JOIN LOCALIZACAO l ON f.Id_Localizacao = l.Id
     LEFT JOIN COMENTARIO c ON p.Id = c.Id_Postagem
@@ -40,6 +40,7 @@ $post = $stmt->get_result()->fetch_assoc();
 
 // Se a postagem não existir, redirecionar
 if (!$post) {
+    $_SESSION['error'] = "Postagem não encontrada";
     header('Location: ./');
     exit;
 }
@@ -115,7 +116,11 @@ include 'layouts/navbar.php';
                                 <?php endif; ?>
                                 <div>
                                     <h3>
-                                        <?php echo htmlspecialchars($post['Nome_Usuario']); ?>
+                                        <?php if($post['Nome_Usuario']): ?>
+                                            <?php echo htmlspecialchars($post['Nome_Usuario']); ?>
+                                        <?php else: ?>
+                                            Usuário Deletado
+                                        <?php endif; ?>
                                         <?php if(is_especialista($post['Id_Usuario'])): ?>
                                             <i class="fas fa-check-circle verified-badge" title="Especialista verificado"></i>
                                         <?php endif; ?>
@@ -126,8 +131,8 @@ include 'layouts/navbar.php';
                             </div>
                             <div class="post-meta">
                                 <div class="post-actions">
-                                    <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="like-btn btn-sm <?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'liked' : ''; ?>" data-post-id="<?php echo $post['Id']; ?>">
-                                        <i class="<?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
+                                    <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="like-btn btn-sm <?php echo isset($_SESSION['id']) && has_curtida($_SESSION['id'], $post['Id']) ? 'liked' : ''; ?>" data-post-id="<?php echo $post['Id']; ?>">
+                                        <i class="<?php echo isset($_SESSION['id']) && has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
                                         <span data-count-id="<?php echo $post['Id']; ?>"><?php echo $post['Curtidas']; ?></span>
                                     </button>
                                 </div>

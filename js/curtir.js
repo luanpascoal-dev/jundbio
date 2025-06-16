@@ -6,7 +6,12 @@ function curtirPost(postId) {
         },
         body: `post_id=${postId}`
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao processar curtidas: ' + response.statusText);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log(data);
         if (data.sucesso) {
@@ -28,7 +33,12 @@ function curtirPost(postId) {
             // Atualizar o contador
             likeCount.textContent = data.total;
         } else {
-            console.error('Erro ao processar curtida:', data.mensagem);
+            if(data.mensagem == "Login Necessário") {
+                console.log("Redirecionando para login");
+                window.location.href = 'login';
+            } else {
+                console.error('Erro ao processar curtida:', data.mensagem);
+            }
         }
     })
     .catch(error => {

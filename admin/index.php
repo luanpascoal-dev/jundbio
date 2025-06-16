@@ -39,7 +39,7 @@ try {
     $ultimas_especies = get_especies(true, 5);
 
     // Últimos usuários registrados
-    $ultimos_usuarios = get_usuarios(true, 5);
+    $ultimos_usuarios = get_usuarios(true, true, 5);
 
 } catch(PDOException $e) {
     $_SESSION['error'] = "Erro ao carregar estatísticas: " . $e->getMessage();
@@ -60,7 +60,7 @@ include '../layouts/navbar_admin.php';
 
     <!-- Cards de Estatísticas -->
     <div class="stats-grid">
-        <div class="stat-card">
+        <a href="especies" class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-paw"></i>
             </div>
@@ -68,9 +68,9 @@ include '../layouts/navbar_admin.php';
                 <h3><?php echo $stats['especies']; ?></h3>
                 <p>Espécies Cadastradas</p>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a href="usuarios" class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
@@ -78,9 +78,9 @@ include '../layouts/navbar_admin.php';
                 <h3><?php echo $stats['usuarios']; ?></h3>
                 <p>Usuários Registrados</p>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a href="posts" class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-image"></i>
             </div>
@@ -88,9 +88,9 @@ include '../layouts/navbar_admin.php';
                 <h3><?php echo $stats['posts']; ?></h3>
                 <p>Postagens Publicadas</p>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a href="comentarios" class="stat-card">
             <div class="stat-icon">
                 <i class="fas fa-comments"></i>
             </div>
@@ -98,7 +98,7 @@ include '../layouts/navbar_admin.php';
                 <h3><?php echo $stats['comentarios']; ?></h3>
                 <p>Comentários</p>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Grid de Informações -->

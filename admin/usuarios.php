@@ -105,7 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['error'] = "Erro ao alterar tipo: " . $e->getMessage();
             }
             break;
+        case 'excluir_usuario':
+            header("Location: excluir_usuario");
+            break;
     }
+    
     
     // Redirecionar para evitar reenvio do formulário
     header("Location: usuarios");
@@ -188,7 +192,7 @@ try {
         FROM USUARIO WHERE Id != 1
     ";
     $stats_result = $conn->query($stats_sql)->fetch_assoc();
-    $stats = array_merge($stats, $stats_result);
+    $stats = array_merge($stats, $stats_result ?? 0);
 } catch (Exception $e) {
     // Manter valores padrão
 }
@@ -271,6 +275,8 @@ include '../layouts/navbar_admin.php';
                     </a>
                 </form>
             </div>
+
+            <?php include '../layouts/alerts.php'; ?>
 
             <!-- Lista de Usuários -->
             <div class="admin-list">
@@ -394,69 +400,8 @@ include '../layouts/navbar_admin.php';
         </div>
     </div>
 
-    <!-- Modal Novo Usuário -->
-    <div id="novoUsuarioModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('novoUsuarioModal')">&times;</span>
-            <h3>Criar Novo Usuário</h3>
-            <form method="POST">
-                <input type="hidden" name="action" value="criar_usuario">
-                
-                <div class="form-group">
-                    <label for="nome">Nome Completo *</label>
-                    <input type="text" id="nome" name="nome" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="senha">Senha *</label>
-                    <input type="password" id="senha" name="senha" required minlength="6">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tipo">Tipo de Usuário *</label>
-                    <select id="tipo" name="tipo" required>
-                        <option value="">Selecione...</option>
-                        <option value="comum">Usuário</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="ocupacao">Ocupação</label>
-                    <input type="text" id="ocupacao" name="ocupacao">
-                </div>
-                
-                <div class="form-group">
-                    <label for="biografia">Biografia</label>
-                    <textarea id="biografia" name="biografia" rows="3"></textarea>
-                </div>
-                
-                <div class="btn-container">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i>
-                        Criar Usuário
-                    </button>
-                    <button type="button" class="btn btn-light" onclick="closeModal('novoUsuarioModal')">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    
     <script>
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
         
         function alterarStatus(userId, currentStatus) {
             const newStatus = currentStatus === '1' ? '0' : '1';
@@ -494,8 +439,14 @@ include '../layouts/navbar_admin.php';
 
         function confirmarExclusao(id, nome) {
             if (confirm(`Tem certeza ABSOLUTA que deseja excluir o usuário "${nome}" (ID: ${id})? Suas postagens ficarão órfãs, e seus comentários e curtidas serão removidos.`)) {
-                document.getElementById('idUsuarioParaExcluir').value = id;
-                document.getElementById('formExcluirUsuario').submit();
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'excluir_usuario';
+                form.innerHTML = `
+                    <input type="hidden" name="id" value="${id}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
             }
         }
         

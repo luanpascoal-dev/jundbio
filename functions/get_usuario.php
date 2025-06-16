@@ -1,11 +1,13 @@
 <?php
 
-function get_usuarios($no_admin = false, $limit = null) {
+function get_usuarios($no_admin = false, $desc = false, $limit = null) {
     global $conn;
     $query = "SELECT *, COUNT(Id) as total FROM USUARIO";
     if ($no_admin) $query .= " WHERE Id != 1";
     $query .= " GROUP BY Id ORDER BY Id";
+    if ($desc) $query .= " DESC";
     if ($limit) $query .= " LIMIT $limit";
+    
     $stmt = $conn->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();

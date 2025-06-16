@@ -205,8 +205,10 @@ include 'layouts/navbar.php';
                 popupContent += `<img src="${post.Foto}" alt="Imagem do post" class="popup-imagem">`;
             }
             
+            let nome = post.autor_nome ? `<a href="perfil?id=${post.Id_Usuario}">${post.autor_nome}</a>` : '<b>Usuário Deletado</b>';
+
             popupContent += `
-                    <div class="popup-autor">Por <a href="perfil?id=${post.Id_Usuario}">${post.autor_nome}</a></div>
+                    <div class="popup-autor">Por ${nome}</div>
                     <div class="popup-data">${formatarData(post.DataHora_Envio)}</div>
                 </div>
             `;
@@ -229,9 +231,10 @@ include 'layouts/navbar.php';
                         ${post.Descricao ? post.Descricao.substring(0, 100) + '...' : ''}
                     </div>
             `;
-            
+            let nome = post.autor_nome ? `<a href="perfil?id=${post.Id_Usuario}">${post.autor_nome}</a>` : '<b>Usuário Deletado</b>';
+
             popupContent += `
-                    <div class="popup-autor">Por <a href="perfil?id=${post.Id_Usuario}">${post.autor_nome}</a></div>
+                    <div class="popup-autor">Por ${nome}</div>
                     <div class="popup-data">${formatarData(post.DataHora_Envio)}</div>
                 </div>
             `;

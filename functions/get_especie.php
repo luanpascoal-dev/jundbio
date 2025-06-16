@@ -78,8 +78,8 @@ function get_especies_mapa() {
 
 function get_especie_foto($id, $limit = 5) {
     global $conn;
-    $stmt = $conn->prepare("SELECT URL FROM FOTO WHERE Id_Especie = ? AND Status = 'APROVADO' LIMIT ?");
+    $stmt = $conn->prepare("SELECT URL FROM FOTO WHERE Id_Especie = ? LIMIT ?");
     $stmt->bind_param("ii", $id, $limit);
     $stmt->execute();
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    return $stmt->get_result();
 }

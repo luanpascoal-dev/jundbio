@@ -322,6 +322,7 @@ textarea {
     display: flex;
     align-items: center;
     gap: 1rem;
+    text-decoration: none;
 }
 
 .stat-icon {
@@ -334,6 +335,7 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
 }
 
 .stat-info h3 {

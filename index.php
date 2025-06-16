@@ -113,8 +113,8 @@ include 'layouts/navbar.php';
                         
                         <div class="postagem-footer">
                             <div class="interactions">
-                                <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="like-btn btn-sm <?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'liked' : ''; ?>" data-post-id="<?= $post['Id'] ?>">
-                                <i class="<?php echo has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
+                                <button onclick="curtirPost(<?php echo $post['Id']; ?>)" class="like-btn btn-sm <?php echo isset($_SESSION['id']) && has_curtida($_SESSION['id'], $post['Id']) ? 'liked' : ''; ?>" data-post-id="<?= $post['Id'] ?>">
+                                <i class="<?php echo isset($_SESSION['id']) && has_curtida($_SESSION['id'], $post['Id']) ? 'fa-solid' : 'fa-regular'; ?> fa-heart" data-icon="<?php echo $post['Id']; ?>"></i>
                                 <span data-count-id="<?php echo $post['Id']; ?>"><?php echo $post['Curtidas']; ?></span>
                                 </button>
                                 <a href="verpost?id=<?= $post['Id'] ?>" class="btn btn-primary btn-sm comment-btn">

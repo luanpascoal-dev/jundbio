@@ -109,8 +109,8 @@ include 'layouts/navbar.php'; //
                     <nav class="config-nav">
                         <a href="#secao-geral" class="config-nav-item active"><i class="fas fa-cog"></i> Geral</a>
                         <a href="#secao-senha" class="config-nav-item"><i class="fas fa-lock"></i> Alterar Senha</a>
-                        <a href="#secao-notificacoes" class="config-nav-item"><i class="fas fa-bell"></i> Notificações</a>
-                        <a href="#secao-privacidade" class="config-nav-item"><i class="fas fa-user-shield"></i> Privacidade</a>
+                        <!-- <a href="#secao-notificacoes" class="config-nav-item"><i class="fas fa-bell"></i> Notificações</a> -->
+                        <!-- <a href="#secao-privacidade" class="config-nav-item"><i class="fas fa-user-shield"></i> Privacidade</a> -->
                         <a href="#secao-excluir" class="config-nav-item config-nav-item-danger"><i class="fas fa-trash-alt"></i> Excluir Conta</a>
                     </nav>
                 </aside>
